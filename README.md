@@ -11,4 +11,4 @@ This project is an open-source tool designed to process images and create unique
 To run this project on your local machine, you can clone this repository:
 
 ```bash
-git clone [https://github.com/aligokdam/cutout.github.io.git](https://github.com/aligokdam/cutout.github.io.git)
+git clone [[https://github.com/aligokdam/cutout.github.io.git](https://aligokdam.github.io/cutout.github.io/)]
