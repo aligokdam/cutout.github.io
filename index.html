@@ -8,7 +8,7 @@
      (frame-ancestors) require a real HTTP response header to fully apply. -->
 <meta http-equiv="Content-Security-Policy" content="
   default-src 'self';
-  script-src 'self' 'unsafe-inline';
+  script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval';
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: blob:;
   connect-src 'self';
@@ -26,6 +26,12 @@
 <meta name="theme-color" content="#0b0c0f">
 
 <title>Cutout Effect Studio</title>
+
+<!-- Optional WASM acceleration engine (see wasm/cutout_effect.cpp). Built
+     automatically by .github/workflows/build-wasm.yml. If this file
+     doesn't exist yet (or fails to load), the app transparently falls
+     back to the pure-JS implementation — see _loadWasmModule() below. -->
+<script src="wasm/dist/cutout_wasm.js" defer></script>
 
 <style>
   /* ============================================================
@@ -88,6 +94,37 @@
     outline:2px solid var(--accent);
     outline-offset:2px;
     border-radius:6px;
+  }
+
+  /* ---- Language switcher (fixed, never shifts layout) ---- */
+  .lang-switch{
+    position:fixed;
+    top:18px;
+    right:18px;
+    z-index:100;
+    display:inline-flex;
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:999px;
+    padding:4px;
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    box-shadow:var(--shadow-md);
+  }
+  .lang-switch button{
+    border:none;
+    background:transparent;
+    color:var(--muted);
+    font-size:0.8rem;
+    font-weight:700;
+    padding:6px 12px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:background .2s var(--ease), color .2s var(--ease);
+  }
+  .lang-switch button[aria-pressed="true"]{
+    background:linear-gradient(135deg, var(--accent), var(--accent-2));
+    color:#0b0c0e;
   }
 
   /* ============================================================
@@ -368,7 +405,8 @@
   }
 
   @media (max-width:600px){
-    header.hero{ padding:40px 12px 20px; }
+    .lang-switch{ top:12px; right:12px; }
+    header.hero{ padding:52px 12px 20px; }
     .panel{ padding:18px; border-radius:var(--radius-md); }
     .upload-area{ padding:32px 16px; }
     .controls-grid{ grid-template-columns:1fr; gap:20px; }
@@ -381,9 +419,14 @@
 </head>
 <body>
 
+  <div class="lang-switch" role="group" aria-label="Language selector">
+    <button id="langEnBtn" type="button" aria-pressed="true">EN</button>
+    <button id="langTrBtn" type="button" aria-pressed="false">TR</button>
+  </div>
+
   <header class="hero fade-in">
-    <h1 class="title">Cutout Effect Studio</h1>
-    <p class="subtitle">Upload a photo, posterize it into bold flat tones, and export a polished cutout-style image — all in real time.</p>
+    <h1 class="title" data-i18n="appTitle">Cutout Effect Studio</h1>
+    <p class="subtitle" data-i18n="appSubtitle">Upload a photo, posterize it into bold flat tones, and export a polished cutout-style image — all in real time.</p>
   </header>
 
   <main class="app">
@@ -400,8 +443,8 @@
         aria-describedby="uploadHint"
       >
         <span class="icon" aria-hidden="true">🖼️</span>
-        <span class="primary-text" id="uploadText">Click, drag &amp; drop, or press Enter to upload an image</span>
-        <span class="hint" id="uploadHint">PNG, JPG, JPEG, WEBP, HEIC or HEIF · up to 20MB</span>
+        <span class="primary-text" id="uploadText" data-i18n="uploadPrimary">Click, drag &amp; drop, or press Enter to upload an image</span>
+        <span class="hint" id="uploadHint" data-i18n="uploadHint">PNG, JPG, JPEG, WEBP, HEIC or HEIF · up to 20MB</span>
         <input
           type="file"
           id="fileInput"
@@ -418,7 +461,7 @@
       <div class="controls-grid">
         <div class="slider-group">
           <label for="levels">
-            Number of Levels
+            <span data-i18n="levelsLabel">Number of Levels</span>
             <span class="value" id="levelsValue">6</span>
           </label>
           <input
@@ -436,7 +479,7 @@
         </div>
         <div class="slider-group">
           <label for="simplicity">
-            Edge Simplicity
+            <span data-i18n="simplicityLabel">Edge Simplicity</span>
             <span class="value" id="simplicityValue">4</span>
           </label>
           <input
@@ -454,7 +497,7 @@
         </div>
         <div class="slider-group">
           <label for="fidelity">
-            Edge Fidelity
+            <span data-i18n="fidelityLabel">Edge Fidelity</span>
             <span class="value" id="fidelityValue">2</span>
           </label>
           <input
@@ -472,10 +515,10 @@
         </div>
       </div>
       <div class="controls-actions">
-        <button id="resetSlidersBtn" class="secondary" disabled aria-label="Reset all sliders to their default values">
+        <button id="resetSlidersBtn" class="secondary" disabled aria-label="Reset all sliders to their default values" data-i18n="resetAllSettings">
           Reset All Settings
         </button>
-        <button id="resetBtn" class="secondary" disabled aria-label="Reset image to original, closest to unedited">
+        <button id="resetBtn" class="secondary" disabled aria-label="Reset image to original, closest to unedited" data-i18n="resetToOriginal">
           Reset to Original
         </button>
       </div>
@@ -484,10 +527,10 @@
     <section class="panel fade-in d3" aria-labelledby="previewHeading">
       <h2 id="previewHeading" style="position:absolute;left:-9999px;">Image preview</h2>
       <div class="canvas-wrap" id="canvasWrap">
-        <span class="placeholder" id="placeholderText">No image loaded yet</span>
+        <span class="placeholder" id="placeholderText" data-i18n="noImage">No image loaded yet</span>
       </div>
       <div class="actions">
-        <button id="downloadBtn" class="primary" disabled aria-label="Download the processed image as a PNG file">
+        <button id="downloadBtn" class="primary" disabled aria-label="Download the processed image as a PNG file" data-i18n="download">
           Download PNG
         </button>
       </div>
@@ -506,6 +549,66 @@
 // real HTTP response header, not via <meta>. If serving this file from a
 // server, also send: Content-Security-Policy: frame-ancestors 'none'
 // and X-Frame-Options: DENY as actual HTTP headers.
+
+/* ==================================================================
+   i18n dictionary (English / Turkish)
+   ================================================================== */
+const I18N = {
+  en: {
+    appTitle: "Cutout Effect Studio",
+    appSubtitle: "Upload a photo, posterize it into bold flat tones, and export a polished cutout-style image — all in real time.",
+    uploadPrimary: "Click, drag & drop, or press Enter to upload an image",
+    uploadPrimaryReplace: "Click, drag & drop, or press Enter to replace this image",
+    uploadHint: "PNG, JPG, JPEG, WEBP, HEIC or HEIF · up to 20MB",
+    levelsLabel: "Number of Levels",
+    simplicityLabel: "Edge Simplicity",
+    fidelityLabel: "Edge Fidelity",
+    resetAllSettings: "Reset All Settings",
+    resetToOriginal: "Reset to Original",
+    download: "Download PNG",
+    noImage: "No image loaded yet",
+    errorNoFile: "No file was selected.",
+    errorUnsupportedFile: "Unsupported file type. Please upload a PNG, JPG, JPEG, WEBP, HEIC, or HEIF image.",
+    errorTooLarge: "File is too large. Maximum allowed size is 20MB.",
+    errorEmptyFile: "The selected file appears to be empty.",
+    errorHeic: "This looks like a HEIC/HEIF photo (common on iPhone/Mac), even if its name ends in .jpg. Please convert it to JPEG or PNG first — on Mac: open it in Preview → File → Export, choose JPEG/PNG — then re-upload.",
+    errorInvalidImage: "This file could not be read as a valid image.",
+    errorProcessing: "Something went wrong while processing that image.",
+    errorExport: "Could not export the image. Please try again.",
+    statusLoaded: "Image loaded. Adjust the slider to preview the cutout effect.",
+    statusResetOriginal: "Image reset to its closest-to-original state.",
+    statusResetSettings: "All settings reset to their defaults.",
+    statusDownloadedNewTab: "Download started — if nothing happened, use the image opened in the new tab and save it from there.",
+    statusDownloadedSaveAs: "Download started. If it didn't work, right-click the image above and choose \"Save Image As…\".",
+  },
+  tr: {
+    appTitle: "Cutout Effect Studio",
+    appSubtitle: "Bir fotoğraf yükleyin, kalın düz tonlara ayırın (posterize) ve şık bir cutout-tarzı görsel olarak anında dışa aktarın.",
+    uploadPrimary: "Görsel yüklemek için tıklayın, sürükleyip bırakın veya Enter'a basın",
+    uploadPrimaryReplace: "Değiştirmek için tıklayın, sürükleyip bırakın veya Enter'a basın",
+    uploadHint: "PNG, JPG, JPEG, WEBP, HEIC veya HEIF · en fazla 20MB",
+    levelsLabel: "Seviye Sayısı",
+    simplicityLabel: "Kenar Sadeliği",
+    fidelityLabel: "Kenar Netliği",
+    resetAllSettings: "Tüm Ayarları Sıfırla",
+    resetToOriginal: "Orijinale Sıfırla",
+    download: "PNG İndir",
+    noImage: "Henüz görsel yüklenmedi",
+    errorNoFile: "Hiçbir dosya seçilmedi.",
+    errorUnsupportedFile: "Desteklenmeyen dosya türü. Lütfen PNG, JPG, JPEG, WEBP, HEIC veya HEIF yükleyin.",
+    errorTooLarge: "Dosya çok büyük. İzin verilen maksimum boyut 20MB.",
+    errorEmptyFile: "Seçilen dosya boş görünüyor.",
+    errorHeic: "Bu bir HEIC/HEIF fotoğrafı gibi görünüyor (iPhone/Mac'te yaygın), adı .jpg ile bitse bile. Lütfen önce JPEG veya PNG'ye çevirin — Mac'te: Preview → File → Export ile JPEG/PNG seçin — sonra tekrar yükleyin.",
+    errorInvalidImage: "Bu dosya geçerli bir görsel olarak okunamadı.",
+    errorProcessing: "Bu görsel işlenirken bir sorun oluştu.",
+    errorExport: "Görsel dışa aktarılamadı. Lütfen tekrar deneyin.",
+    statusLoaded: "Görsel yüklendi. Efekti önizlemek için sliderı hareket ettirin.",
+    statusResetOriginal: "Görsel, orijinaline en yakın haline sıfırlandı.",
+    statusResetSettings: "Tüm ayarlar varsayılanlarına sıfırlandı.",
+    statusDownloadedNewTab: "İndirme başladı — hiçbir şey olmadıysa, yeni sekmede açılan görseli oradan kaydedin.",
+    statusDownloadedSaveAs: "İndirme başladı. Çalışmadıysa, yukarıdaki görsele sağ tıklayıp \"Görseli Farklı Kaydet…\" seçin.",
+  },
+};
 
 /* ==================================================================
    CutoutEffectApp
@@ -540,7 +643,11 @@ class CutoutEffectApp {
       downloadBtn: root.getElementById("downloadBtn"),
       canvasWrap: root.getElementById("canvasWrap"),
       statusMessage: root.getElementById("statusMessage"),
+      langEnBtn: root.getElementById("langEnBtn"),
+      langTrBtn: root.getElementById("langTrBtn"),
     };
+
+    this.lang = "en";
 
     // Mutable state
     this.canvas = null;
@@ -548,8 +655,54 @@ class CutoutEffectApp {
     this.originalImageData = null; // pristine pixel data, re-used on every slider move
     this.currentObjectURL = null;  // tracked so we can revoke it and avoid memory leaks
     this._pendingRender = false;   // coalesces rapid slider drags into one render per frame
+    this.wasmModule = null;        // set once the WASM engine has loaded successfully
 
     this._bindEvents();
+    this._loadWasmModule();
+    this._applyTranslations();
+  }
+
+  /* ---------------- i18n ---------------- */
+
+  t(key) {
+    return (I18N[this.lang] && I18N[this.lang][key]) || I18N.en[key] || key;
+  }
+
+  setLanguage(lang) {
+    if (lang !== "en" && lang !== "tr") return;
+    this.lang = lang;
+    document.documentElement.lang = lang;
+    this.dom.langEnBtn.setAttribute("aria-pressed", String(lang === "en"));
+    this.dom.langTrBtn.setAttribute("aria-pressed", String(lang === "tr"));
+    this._applyTranslations();
+  }
+
+  _applyTranslations() {
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      const key = el.getAttribute("data-i18n");
+      el.textContent = this.t(key);
+    });
+    this.dom.uploadText.textContent = this.originalImageData
+      ? this.t("uploadPrimaryReplace")
+      : this.t("uploadPrimary");
+  }
+
+  // Loads the WebAssembly engine (built from wasm/cutout_effect.cpp) if
+  // its glue script (wasm/dist/cutout_wasm.js) is present and loaded. This
+  // is entirely optional: if the file 404s (not built yet, or opened via
+  // file:// where fetch of the .wasm binary may be blocked), the app
+  // simply continues using the pure-JS implementation with no visible
+  // error — WASM is a performance upgrade, never a hard requirement.
+  async _loadWasmModule() {
+    if (typeof window.CutoutWasmModule !== "function") {
+      return; // glue script not loaded (not built yet, or load blocked) — JS path is used
+    }
+    try {
+      this.wasmModule = await window.CutoutWasmModule();
+    } catch (err) {
+      console.warn("Cutout Effect Studio — WASM engine unavailable, using JS engine:", err);
+      this.wasmModule = null;
+    }
   }
 
   /* ---------------- Status / error messaging ---------------- */
@@ -568,7 +721,7 @@ class CutoutEffectApp {
 
   validateFile(file) {
     if (!file) {
-      return { valid: false, reason: "No file was selected." };
+      return { valid: false, reason: this.t("errorNoFile") };
     }
 
     const nameLower = file.name.toLowerCase();
@@ -587,19 +740,19 @@ class CutoutEffectApp {
     if (!hasAllowedMime || !hasAllowedExtension) {
       return {
         valid: false,
-        reason: "Unsupported file type. Please upload a PNG, JPG, JPEG, WEBP, HEIC, or HEIF image.",
+        reason: this.t("errorUnsupportedFile"),
       };
     }
 
     if (file.size > CutoutEffectApp.MAX_FILE_SIZE_BYTES) {
       return {
         valid: false,
-        reason: "File is too large. Maximum allowed size is 20MB.",
+        reason: this.t("errorTooLarge"),
       };
     }
 
     if (file.size === 0) {
-      return { valid: false, reason: "The selected file appears to be empty." };
+      return { valid: false, reason: this.t("errorEmptyFile") };
     }
 
     return { valid: true };
@@ -663,7 +816,7 @@ class CutoutEffectApp {
       .then((isHeicLike) => {
         if (isHeicLike) {
           this.setStatus(
-            "This looks like a HEIC/HEIF photo (common on iPhone/Mac), even if its name ends in .jpg. Please convert it to JPEG or PNG first — on Mac: open it in Preview → File → Export, choose JPEG/PNG — then re-upload.",
+            this.t("errorHeic"),
             "error"
           );
           return;
@@ -735,17 +888,17 @@ class CutoutEffectApp {
         img = await this._loadImageElement(dataUrl);
       } catch (fallbackErr) {
         console.error("Cutout Effect Studio — image load error:", fallbackErr);
-        this.setStatus("This file could not be read as a valid image.", "error");
+        this.setStatus(this.t("errorInvalidImage"), "error");
         return;
       }
     }
 
     try {
       this._handleImageLoaded(img);
-      this.setStatus("Image loaded. Adjust the slider to preview the cutout effect.", "success");
+      this.setStatus(this.t("statusLoaded"), "success");
     } catch (err) {
       console.error("Cutout Effect Studio — image processing error:", err);
-      this.setStatus("Something went wrong while processing that image.", "error");
+      this.setStatus(this.t("errorProcessing"), "error");
     } finally {
       // The bitmap is already drawn to canvas; the object URL (if any) is
       // no longer needed, so release it immediately to free memory.
@@ -798,7 +951,7 @@ class CutoutEffectApp {
     // re-posterize from the true source instead of compounding effects.
     this.originalImageData = this.ctx.getImageData(0, 0, width, height);
 
-    this.dom.uploadText.textContent = "Click, drag & drop, or press Enter to replace this image";
+    this.dom.uploadText.textContent = this.t("uploadPrimaryReplace");
     this.dom.resetBtn.disabled = false;
     this.dom.resetSlidersBtn.disabled = false;
     this.dom.downloadBtn.disabled = false;
@@ -842,9 +995,55 @@ class CutoutEffectApp {
     return Math.round(bucketIndex * stepSize);
   }
 
+  // Renders the effect using the WASM engine when available and healthy,
+  // transparently falling back to the pure-JS implementation otherwise
+  // (WASM not loaded yet, failed to load, or threw at runtime). Both paths
+  // implement the identical algorithm, so the visual result is the same
+  // either way — only performance differs.
   applyCutoutEffect(levels, simplicity = 0, fidelity = 3) {
     if (!this.originalImageData || !this.ctx) return;
 
+    if (this.wasmModule) {
+      try {
+        this._applyCutoutEffectWasm(levels, simplicity, fidelity);
+        return;
+      } catch (err) {
+        console.warn("Cutout Effect Studio — WASM engine failed, falling back to JS:", err);
+        this.wasmModule = null; // don't keep retrying a broken instance
+      }
+    }
+
+    this._applyCutoutEffectJS(levels, simplicity, fidelity);
+  }
+
+  // WASM-accelerated path: copies pixels into the WASM heap, calls the
+  // compiled C++ implementation in wasm/cutout_effect.cpp, and copies the
+  // result back out. See wasm/README.md for the build pipeline.
+  _applyCutoutEffectWasm(levels, simplicity, fidelity) {
+    const Module = this.wasmModule;
+    const { width, height, data } = this.originalImageData;
+    const numBytes = data.length;
+    const ptr = Module._malloc(numBytes);
+
+    try {
+      Module.HEAPU8.set(data, ptr);
+      Module._applyCutoutEffect(ptr, width, height, levels, simplicity, fidelity);
+
+      // Re-read Module.HEAPU8 fresh (not a cached buffer) in case the WASM
+      // heap grew during the call, then copy the result out immediately.
+      const resultView = new Uint8ClampedArray(Module.HEAPU8.buffer, ptr, numBytes);
+      const imgData = this.ctx.createImageData(width, height);
+      imgData.data.set(resultView);
+      this.ctx.putImageData(imgData, 0, 0);
+    } finally {
+      Module._free(ptr);
+    }
+  }
+
+  // Pure-JS fallback path — always available, used when the WASM module
+  // hasn't loaded (e.g. opened via file://, or wasm/dist/ not built yet)
+  // or has failed.
+  _applyCutoutEffectJS(levels, simplicity, fidelity) {
     const { width, height, data: src } = this.originalImageData;
     const radius = Math.round(simplicity);
     const blurred = radius > 0 ? this._boxBlur(src, width, height, radius) : src;
@@ -971,7 +1170,7 @@ class CutoutEffectApp {
     this._setSliderValue(this.dom.simplicitySlider, this.dom.simplicityValue, 0);
     this._setSliderValue(this.dom.fidelitySlider, this.dom.fidelityValue, maxFidelity);
 
-    this.setStatus("Image reset to its closest-to-original state.", "info");
+    this.setStatus(this.t("statusResetOriginal"), "info");
   }
 
   resetAllSettings() {
@@ -982,7 +1181,7 @@ class CutoutEffectApp {
     this._setSliderValue(this.dom.fidelitySlider, this.dom.fidelityValue, CutoutEffectApp.DEFAULT_FIDELITY);
 
     this._renderEffect();
-    this.setStatus("All settings reset to their defaults.", "info");
+    this.setStatus(this.t("statusResetSettings"), "info");
   }
 
   downloadImage() {
@@ -993,7 +1192,7 @@ class CutoutEffectApp {
       dataUrl = this.canvas.toDataURL("image/png");
     } catch (err) {
       console.error("Cutout Effect Studio — export error:", err);
-      this.setStatus("Could not export the image. Please try again.", "error");
+      this.setStatus(this.t("errorExport"), "error");
       return;
     }
 
@@ -1016,9 +1215,9 @@ class CutoutEffectApp {
     // the anchor-click download above is blocked.
     const opened = window.open(dataUrl, "_blank", "noopener,noreferrer");
     if (opened) {
-      this.setStatus("Download started — if nothing happened, use the image opened in the new tab and save it from there.", "success");
+      this.setStatus(this.t("statusDownloadedNewTab"), "success");
     } else {
-      this.setStatus("Download started. If it didn't work, right-click the image above and choose \"Save Image As…\".", "success");
+      this.setStatus(this.t("statusDownloadedSaveAs"), "success");
     }
   }
 
@@ -1031,7 +1230,11 @@ class CutoutEffectApp {
       simplicitySlider, simplicityValue,
       fidelitySlider, fidelityValue,
       resetBtn, resetSlidersBtn, downloadBtn,
+      langEnBtn, langTrBtn,
     } = this.dom;
+
+    langEnBtn.addEventListener("click", () => this.setLanguage("en"));
+    langTrBtn.addEventListener("click", () => this.setLanguage("tr"));
 
     fileInput.addEventListener("change", (e) => {
       const file = e.target.files && e.target.files[0];
