@@ -1,6 +1,8 @@
 # Cutout Effect Studio
 
-This project is an open-source tool designed to process images and create unique "cutout" effects.
+This project is an open-source tool designed to process images and create unique "cutout" effects. 
+
+Link: https://aligokdam.github.io/cutout.github.io/
 
 ## Features
 * Fast image processing.
