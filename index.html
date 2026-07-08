@@ -127,6 +127,206 @@
     color:#0b0c0e;
   }
 
+  /* ---- Menu (hamburger) button, fixed top-left ---- */
+  .menu-btn{
+    position:fixed;
+    top:18px;
+    left:18px;
+    z-index:100;
+    width:42px;
+    height:42px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:999px;
+    cursor:pointer;
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    box-shadow:var(--shadow-md);
+    transition:border-color .2s var(--ease), background .2s var(--ease);
+  }
+  .menu-btn:hover,
+  .menu-btn:focus-visible{
+    border-color:var(--accent);
+    background:rgba(94,177,255,0.08);
+  }
+  .menu-btn span{
+    display:block;
+    width:18px;
+    height:2px;
+    border-radius:2px;
+    background:var(--text);
+    transition:transform .25s var(--ease), opacity .2s var(--ease);
+  }
+  .menu-btn[aria-expanded="true"] span:nth-child(1){
+    transform:translateY(6px) rotate(45deg);
+  }
+  .menu-btn[aria-expanded="true"] span:nth-child(2){
+    opacity:0;
+  }
+  .menu-btn[aria-expanded="true"] span:nth-child(3){
+    transform:translateY(-6px) rotate(-45deg);
+  }
+
+  /* ---- About / intro drawer ---- */
+  .about-overlay{
+    position:fixed;
+    inset:0;
+    z-index:200;
+    background:rgba(6,7,9,0.55);
+    backdrop-filter:blur(3px);
+    -webkit-backdrop-filter:blur(3px);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .28s var(--ease);
+  }
+  .about-overlay.open{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .about-drawer{
+    position:fixed;
+    top:0;
+    left:0;
+    bottom:0;
+    z-index:201;
+    width:min(380px, 88vw);
+    background:linear-gradient(180deg, var(--bg-1), var(--bg-0));
+    border-right:1px solid var(--panel-border-strong);
+    box-shadow:var(--shadow-md);
+    padding:26px 24px 24px;
+    overflow-y:auto;
+    transform:translateX(-100%);
+    transition:transform .32s var(--ease);
+  }
+  .about-drawer.open{
+    transform:translateX(0);
+  }
+  .about-drawer .about-close{
+    position:absolute;
+    top:16px;
+    right:16px;
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    color:var(--text);
+    font-size:1rem;
+    line-height:1;
+    padding:0;
+    cursor:pointer;
+  }
+  .about-drawer .about-close:hover{
+    border-color:var(--accent);
+  }
+  .about-drawer h2{
+    font-size:1.3rem;
+    font-weight:700;
+    letter-spacing:-0.02em;
+    margin:6px 0 18px;
+    padding-right:34px;
+  }
+  .about-drawer .about-tagline{
+    color:var(--accent);
+    font-size:0.85rem;
+    font-weight:600;
+    margin:-10px 0 18px;
+  }
+  .about-drawer p{
+    color:var(--muted);
+    font-size:0.9rem;
+    line-height:1.6;
+    margin:0 0 16px;
+  }
+  .about-drawer h3{
+    font-size:0.78rem;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--muted-2);
+    margin:22px 0 10px;
+  }
+  .about-drawer ol{
+    margin:0 0 4px;
+    padding-left:20px;
+    color:var(--muted);
+    font-size:0.88rem;
+    line-height:1.7;
+  }
+  .about-drawer ol li::marker{
+    color:var(--accent);
+    font-weight:700;
+  }
+
+  /* ---- Drawer: menu list panel ---- */
+  .about-nav-list{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .about-nav-item{
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    text-align:left;
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:var(--radius-md);
+    padding:14px 16px;
+    color:var(--text);
+    cursor:pointer;
+    transition:border-color .2s var(--ease), background .2s var(--ease), transform .18s var(--ease);
+  }
+  .about-nav-item:hover,
+  .about-nav-item:focus-visible{
+    border-color:var(--accent);
+    background:rgba(94,177,255,0.07);
+    transform:translateX(2px);
+  }
+  .about-nav-icon{
+    font-size:1.3rem;
+    line-height:1;
+  }
+  .about-nav-text{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+  .about-nav-label{
+    font-weight:600;
+    font-size:0.94rem;
+  }
+  .about-nav-sub{
+    font-size:0.78rem;
+    color:var(--muted);
+  }
+
+  /* ---- Drawer: guide panel back button ---- */
+  .about-back{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:transparent;
+    border:none;
+    color:var(--accent);
+    font-weight:600;
+    font-size:0.85rem;
+    padding:0 0 20px;
+    margin-top:2px;
+    cursor:pointer;
+  }
+  .about-back:hover{
+    text-decoration:underline;
+  }
+
   /* ============================================================
      HERO / HEADER — glassmorphism, Apple/Vercel-inspired
      ============================================================ */
@@ -364,10 +564,35 @@
 
   .actions{
     display:flex;
+    align-items:center;
     gap:12px;
     justify-content:flex-end;
     margin-top:18px;
     flex-wrap:wrap;
+  }
+
+  /* ---- Download format switch (segmented control, next to Download button) ---- */
+  .format-switch{
+    display:inline-flex;
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:999px;
+    padding:4px;
+  }
+  .format-switch button{
+    border:none;
+    background:transparent;
+    color:var(--muted);
+    font-size:0.8rem;
+    font-weight:700;
+    padding:8px 16px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:background .2s var(--ease), color .2s var(--ease);
+  }
+  .format-switch button[aria-pressed="true"]{
+    background:linear-gradient(135deg, var(--accent), var(--accent-2));
+    color:#0b0c0e;
   }
 
   /* ---- Status / error live region ---- */
@@ -406,6 +631,8 @@
 
   @media (max-width:600px){
     .lang-switch{ top:12px; right:12px; }
+    .menu-btn{ top:12px; left:12px; width:38px; height:38px; }
+    .about-drawer{ padding:22px 18px 20px; }
     header.hero{ padding:52px 12px 20px; }
     .panel{ padding:18px; border-radius:var(--radius-md); }
     .upload-area{ padding:32px 16px; }
@@ -419,10 +646,59 @@
 </head>
 <body>
 
+  <button
+    class="menu-btn"
+    id="menuBtn"
+    type="button"
+    aria-expanded="false"
+    aria-controls="aboutDrawer"
+    aria-label="Open project menu"
+    data-i18n-aria="menuOpen"
+  >
+    <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+  </button>
+
   <div class="lang-switch" role="group" aria-label="Language selector">
     <button id="langEnBtn" type="button" aria-pressed="true">EN</button>
     <button id="langTrBtn" type="button" aria-pressed="false">TR</button>
   </div>
+
+  <div class="about-overlay" id="aboutOverlay"></div>
+  <nav class="about-drawer" id="aboutDrawer" aria-label="Project menu" aria-hidden="true">
+    <button class="about-close" id="aboutCloseBtn" type="button" aria-label="Close menu" data-i18n-aria="menuClose">✕</button>
+
+    <div class="about-panel" id="aboutPanelMenu">
+      <h2 data-i18n="menuTitle">Menu</h2>
+      <ul class="about-nav-list">
+        <li>
+          <button type="button" class="about-nav-item" id="navGuideBtn">
+            <span class="about-nav-icon" aria-hidden="true">📘</span>
+            <span class="about-nav-text">
+              <span class="about-nav-label" data-i18n="navGuideLabel">User Guide</span>
+              <span class="about-nav-sub" data-i18n="navGuideSub">How the app works</span>
+            </span>
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="about-panel" id="aboutPanelGuide" hidden>
+      <button type="button" class="about-back" id="aboutBackBtn">
+        <span aria-hidden="true">←</span><span data-i18n="navHomeLabel">Cutout Effect Studio</span>
+      </button>
+      <h2 data-i18n="aboutTitle">Cutout Effect Studio</h2>
+      <p class="about-tagline" data-i18n="aboutTagline">Turn any photo into bold, flat, poster-style art.</p>
+      <p data-i18n="aboutBody1">This tool takes a photo and reduces it to a small number of flat color tones with clean, simplified edges — the classic "cutout" or posterized look, similar to a paper collage or screen print.</p>
+      <p data-i18n="aboutBody2">Everything runs locally in your browser. Your photo is never uploaded to a server.</p>
+      <h3 data-i18n="aboutHowTitle">How to use it</h3>
+      <ol>
+        <li data-i18n="aboutStep1">Upload a photo — click the upload area, drag & drop, or press Enter.</li>
+        <li data-i18n="aboutStep2">Adjust Number of Levels, Edge Simplicity and Edge Fidelity to shape the effect.</li>
+        <li data-i18n="aboutStep3">Use Reset to Original or Reset All Settings any time to start over.</li>
+        <li data-i18n="aboutStep4">Pick PNG or JPG and download your result.</li>
+      </ol>
+    </div>
+  </nav>
 
   <header class="hero fade-in">
     <h1 class="title" data-i18n="appTitle">Cutout Effect Studio</h1>
@@ -444,12 +720,12 @@
       >
         <span class="icon" aria-hidden="true">🖼️</span>
         <span class="primary-text" id="uploadText" data-i18n="uploadPrimary">Click, drag &amp; drop, or press Enter to upload an image</span>
-        <span class="hint" id="uploadHint" data-i18n="uploadHint">PNG, JPG, JPEG, WEBP, HEIC or HEIF · up to 20MB</span>
+        <span class="hint" id="uploadHint" data-i18n="uploadHint">PNG, JPG, JPEG, WEBP, HEIC or HEIF · up to 40MB</span>
         <input
           type="file"
           id="fileInput"
           accept="image/png, image/jpeg, image/webp, image/heic, image/heif, .heic, .heif"
-          aria-label="Upload an image file (PNG, JPG, JPEG, WEBP, HEIC, or HEIF, max 20MB)"
+          aria-label="Upload an image file (PNG, JPG, JPEG, WEBP, HEIC, or HEIF, max 40MB)"
         >
       </label>
 
@@ -530,7 +806,11 @@
         <span class="placeholder" id="placeholderText" data-i18n="noImage">No image loaded yet</span>
       </div>
       <div class="actions">
-        <button id="downloadBtn" class="primary" disabled aria-label="Download the processed image as a PNG file" data-i18n="download">
+        <div class="format-switch" role="group" aria-label="Download file format">
+          <button id="formatPngBtn" type="button" aria-pressed="true" data-i18n="formatPng">PNG</button>
+          <button id="formatJpgBtn" type="button" aria-pressed="false" data-i18n="formatJpg">JPG</button>
+        </div>
+        <button id="downloadBtn" class="primary" disabled aria-label="Download the processed image" data-i18n="download">
           Download PNG
         </button>
       </div>
@@ -559,17 +839,36 @@ const I18N = {
     appSubtitle: "Upload a photo, posterize it into bold flat tones, and export a polished cutout-style image — all in real time.",
     uploadPrimary: "Click, drag & drop, or press Enter to upload an image",
     uploadPrimaryReplace: "Click, drag & drop, or press Enter to replace this image",
-    uploadHint: "PNG, JPG, JPEG, WEBP, HEIC or HEIF · up to 20MB",
+    uploadHint: "PNG, JPG, JPEG, WEBP, HEIC or HEIF · up to 40MB",
     levelsLabel: "Number of Levels",
     simplicityLabel: "Edge Simplicity",
     fidelityLabel: "Edge Fidelity",
     resetAllSettings: "Reset All Settings",
     resetToOriginal: "Reset to Original",
     download: "Download PNG",
+    downloadPng: "Download PNG",
+    downloadJpg: "Download JPG",
+    formatPng: "PNG",
+    formatJpg: "JPG",
     noImage: "No image loaded yet",
+    menuOpen: "Open project menu",
+    menuClose: "Close menu",
+    menuTitle: "Menu",
+    navHomeLabel: "Cutout Effect Studio",
+    navGuideLabel: "User Guide",
+    navGuideSub: "How the app works",
+    aboutTitle: "Cutout Effect Studio",
+    aboutTagline: "Turn any photo into bold, flat, poster-style art.",
+    aboutBody1: "This tool takes a photo and reduces it to a small number of flat color tones with clean, simplified edges — the classic \"cutout\" or posterized look, similar to a paper collage or screen print.",
+    aboutBody2: "Everything runs locally in your browser. Your photo is never uploaded to a server.",
+    aboutHowTitle: "How to use it",
+    aboutStep1: "Upload a photo — click the upload area, drag & drop, or press Enter.",
+    aboutStep2: "Adjust Number of Levels, Edge Simplicity and Edge Fidelity to shape the effect.",
+    aboutStep3: "Use Reset to Original or Reset All Settings any time to start over.",
+    aboutStep4: "Pick PNG or JPG and download your result.",
     errorNoFile: "No file was selected.",
     errorUnsupportedFile: "Unsupported file type. Please upload a PNG, JPG, JPEG, WEBP, HEIC, or HEIF image.",
-    errorTooLarge: "File is too large. Maximum allowed size is 20MB.",
+    errorTooLarge: "File is too large. Maximum allowed size is 40MB.",
     errorEmptyFile: "The selected file appears to be empty.",
     errorHeic: "This looks like a HEIC/HEIF photo (common on iPhone/Mac), even if its name ends in .jpg. Please convert it to JPEG or PNG first — on Mac: open it in Preview → File → Export, choose JPEG/PNG — then re-upload.",
     errorInvalidImage: "This file could not be read as a valid image.",
@@ -586,17 +885,36 @@ const I18N = {
     appSubtitle: "Bir fotoğraf yükleyin, kalın düz tonlara ayırın (posterize) ve şık bir cutout-tarzı görsel olarak anında dışa aktarın.",
     uploadPrimary: "Görsel yüklemek için tıklayın, sürükleyip bırakın veya Enter'a basın",
     uploadPrimaryReplace: "Değiştirmek için tıklayın, sürükleyip bırakın veya Enter'a basın",
-    uploadHint: "PNG, JPG, JPEG, WEBP, HEIC veya HEIF · en fazla 20MB",
+    uploadHint: "PNG, JPG, JPEG, WEBP, HEIC veya HEIF · en fazla 40MB",
     levelsLabel: "Seviye Sayısı",
     simplicityLabel: "Kenar Sadeliği",
     fidelityLabel: "Kenar Netliği",
     resetAllSettings: "Tüm Ayarları Sıfırla",
     resetToOriginal: "Orijinale Sıfırla",
     download: "PNG İndir",
+    downloadPng: "PNG İndir",
+    downloadJpg: "JPG İndir",
+    formatPng: "PNG",
+    formatJpg: "JPG",
     noImage: "Henüz görsel yüklenmedi",
+    menuOpen: "Proje menüsünü aç",
+    menuClose: "Menüyü kapat",
+    menuTitle: "Menü",
+    navHomeLabel: "Cutout Effect Studio",
+    navGuideLabel: "Kullanım Kılavuzu",
+    navGuideSub: "Uygulama nasıl çalışır",
+    aboutTitle: "Cutout Effect Studio",
+    aboutTagline: "Herhangi bir fotoğrafı kalın, düz tonlu, poster tarzı bir esere dönüştürün.",
+    aboutBody1: "Bu araç bir fotoğrafı alır ve onu az sayıda düz renk tonuna, sade ve temiz kenarlarla indirger — kağıt kolaj veya serigrafi baskıya benzeyen klasik \"cutout\" / posterize görünümü.",
+    aboutBody2: "Her şey tarayıcınızda, yerel olarak çalışır. Fotoğrafınız hiçbir sunucuya yüklenmez.",
+    aboutHowTitle: "Nasıl kullanılır",
+    aboutStep1: "Bir fotoğraf yükleyin — yükleme alanına tıklayın, sürükleyip bırakın veya Enter'a basın.",
+    aboutStep2: "Efekti şekillendirmek için Seviye Sayısı, Kenar Sadeliği ve Kenar Netliği'ni ayarlayın.",
+    aboutStep3: "İstediğiniz zaman Orijinale Sıfırla veya Tüm Ayarları Sıfırla ile baştan başlayın.",
+    aboutStep4: "PNG veya JPG seçin ve sonucu indirin.",
     errorNoFile: "Hiçbir dosya seçilmedi.",
     errorUnsupportedFile: "Desteklenmeyen dosya türü. Lütfen PNG, JPG, JPEG, WEBP, HEIC veya HEIF yükleyin.",
-    errorTooLarge: "Dosya çok büyük. İzin verilen maksimum boyut 20MB.",
+    errorTooLarge: "Dosya çok büyük. İzin verilen maksimum boyut 40MB.",
     errorEmptyFile: "Seçilen dosya boş görünüyor.",
     errorHeic: "Bu bir HEIC/HEIF fotoğrafı gibi görünüyor (iPhone/Mac'te yaygın), adı .jpg ile bitse bile. Lütfen önce JPEG veya PNG'ye çevirin — Mac'te: Preview → File → Export ile JPEG/PNG seçin — sonra tekrar yükleyin.",
     errorInvalidImage: "Bu dosya geçerli bir görsel olarak okunamadı.",
@@ -623,8 +941,8 @@ class CutoutEffectApp {
   static ALLOWED_MIME_TYPES = ["image/png", "image/jpeg", "image/webp", "image/heic", "image/heif"];
   static ALLOWED_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".heic", ".heif"];
   static HEIC_EXTENSIONS = [".heic", ".heif"];
-  static MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024; // 20MB
-  static MAX_CANVAS_DIMENSION = 1600; // caps memory/CPU use on huge photos
+  static MAX_FILE_SIZE_BYTES = 40 * 1024 * 1024; // 40MB
+  static MAX_CANVAS_DIMENSION = 4096; // caps memory/CPU use on huge photos, while keeping full clarity for most photos
 
   constructor(root) {
     // Cache DOM references once.
@@ -641,13 +959,24 @@ class CutoutEffectApp {
       resetBtn: root.getElementById("resetBtn"),
       resetSlidersBtn: root.getElementById("resetSlidersBtn"),
       downloadBtn: root.getElementById("downloadBtn"),
+      formatPngBtn: root.getElementById("formatPngBtn"),
+      formatJpgBtn: root.getElementById("formatJpgBtn"),
       canvasWrap: root.getElementById("canvasWrap"),
       statusMessage: root.getElementById("statusMessage"),
       langEnBtn: root.getElementById("langEnBtn"),
       langTrBtn: root.getElementById("langTrBtn"),
+      menuBtn: root.getElementById("menuBtn"),
+      aboutOverlay: root.getElementById("aboutOverlay"),
+      aboutDrawer: root.getElementById("aboutDrawer"),
+      aboutCloseBtn: root.getElementById("aboutCloseBtn"),
+      aboutPanelMenu: root.getElementById("aboutPanelMenu"),
+      aboutPanelGuide: root.getElementById("aboutPanelGuide"),
+      navGuideBtn: root.getElementById("navGuideBtn"),
+      aboutBackBtn: root.getElementById("aboutBackBtn"),
     };
 
     this.lang = "en";
+    this.downloadFormat = "png"; // "png" | "jpg" — toggled via the format switch
 
     // Mutable state
     this.canvas = null;
@@ -682,9 +1011,72 @@ class CutoutEffectApp {
       const key = el.getAttribute("data-i18n");
       el.textContent = this.t(key);
     });
+    document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
+      const key = el.getAttribute("data-i18n-aria");
+      el.setAttribute("aria-label", this.t(key));
+    });
     this.dom.uploadText.textContent = this.originalImageData
       ? this.t("uploadPrimaryReplace")
       : this.t("uploadPrimary");
+    this._updateDownloadButtonLabel();
+  }
+
+  _updateDownloadButtonLabel() {
+    const key = this.downloadFormat === "jpg" ? "downloadJpg" : "downloadPng";
+    this.dom.downloadBtn.textContent = this.t(key);
+    this.dom.downloadBtn.setAttribute(
+      "aria-label",
+      this.downloadFormat === "jpg"
+        ? "Download the processed image as a JPG file"
+        : "Download the processed image as a PNG file"
+    );
+  }
+
+  /* ---------------- About drawer ---------------- */
+
+  openAboutDrawer() {
+    this.showMenuPanel(); // always start on the menu list when (re)opened
+    this.dom.aboutOverlay.classList.add("open");
+    this.dom.aboutDrawer.classList.add("open");
+    this.dom.aboutDrawer.setAttribute("aria-hidden", "false");
+    this.dom.menuBtn.setAttribute("aria-expanded", "true");
+  }
+
+  closeAboutDrawer() {
+    this.dom.aboutOverlay.classList.remove("open");
+    this.dom.aboutDrawer.classList.remove("open");
+    this.dom.aboutDrawer.setAttribute("aria-hidden", "true");
+    this.dom.menuBtn.setAttribute("aria-expanded", "false");
+    this.dom.menuBtn.focus();
+  }
+
+  toggleAboutDrawer() {
+    if (this.dom.aboutDrawer.classList.contains("open")) {
+      this.closeAboutDrawer();
+    } else {
+      this.openAboutDrawer();
+    }
+  }
+
+  showMenuPanel() {
+    this.dom.aboutPanelGuide.hidden = true;
+    this.dom.aboutPanelMenu.hidden = false;
+  }
+
+  showGuidePanel() {
+    this.dom.aboutPanelMenu.hidden = true;
+    this.dom.aboutPanelGuide.hidden = false;
+    this.dom.aboutPanelGuide.scrollTop = 0;
+  }
+
+  /* ---------------- Download format ---------------- */
+
+  setDownloadFormat(format) {
+    if (format !== "png" && format !== "jpg") return;
+    this.downloadFormat = format;
+    this.dom.formatPngBtn.setAttribute("aria-pressed", String(format === "png"));
+    this.dom.formatJpgBtn.setAttribute("aria-pressed", String(format === "jpg"));
+    this._updateDownloadButtonLabel();
   }
 
   // Loads the WebAssembly engine (built from wasm/cutout_effect.cpp) if
@@ -1187,9 +1579,23 @@ class CutoutEffectApp {
   downloadImage() {
     if (!this.canvas) return;
 
+    const isJpg = this.downloadFormat === "jpg";
     let dataUrl;
     try {
-      dataUrl = this.canvas.toDataURL("image/png");
+      if (isJpg) {
+        // JPG has no alpha channel — flatten onto a white background first,
+        // otherwise transparent areas would render as black.
+        const flat = document.createElement("canvas");
+        flat.width = this.canvas.width;
+        flat.height = this.canvas.height;
+        const flatCtx = flat.getContext("2d");
+        flatCtx.fillStyle = "#ffffff";
+        flatCtx.fillRect(0, 0, flat.width, flat.height);
+        flatCtx.drawImage(this.canvas, 0, 0);
+        dataUrl = flat.toDataURL("image/jpeg", 1.0);
+      } else {
+        dataUrl = this.canvas.toDataURL("image/png");
+      }
     } catch (err) {
       console.error("Cutout Effect Studio — export error:", err);
       this.setStatus(this.t("errorExport"), "error");
@@ -1201,7 +1607,7 @@ class CutoutEffectApp {
     // contexts that don't grant download permissions.
     try {
       const link = document.createElement("a");
-      link.download = "cutout-effect.png";
+      link.download = isJpg ? "cutout-effect.jpg" : "cutout-effect.png";
       link.href = dataUrl;
       document.body.appendChild(link);
       link.click();
@@ -1230,11 +1636,28 @@ class CutoutEffectApp {
       simplicitySlider, simplicityValue,
       fidelitySlider, fidelityValue,
       resetBtn, resetSlidersBtn, downloadBtn,
+      formatPngBtn, formatJpgBtn,
       langEnBtn, langTrBtn,
+      menuBtn, aboutOverlay, aboutDrawer, aboutCloseBtn,
+      navGuideBtn, aboutBackBtn,
     } = this.dom;
 
     langEnBtn.addEventListener("click", () => this.setLanguage("en"));
     langTrBtn.addEventListener("click", () => this.setLanguage("tr"));
+
+    menuBtn.addEventListener("click", () => this.toggleAboutDrawer());
+    aboutCloseBtn.addEventListener("click", () => this.closeAboutDrawer());
+    navGuideBtn.addEventListener("click", () => this.showGuidePanel());
+    aboutBackBtn.addEventListener("click", () => this.closeAboutDrawer());
+    aboutOverlay.addEventListener("click", () => this.closeAboutDrawer());
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && aboutDrawer.classList.contains("open")) {
+        this.closeAboutDrawer();
+      }
+    });
+
+    formatPngBtn.addEventListener("click", () => this.setDownloadFormat("png"));
+    formatJpgBtn.addEventListener("click", () => this.setDownloadFormat("jpg"));
 
     fileInput.addEventListener("change", (e) => {
       const file = e.target.files && e.target.files[0];
