@@ -6,8 +6,7 @@ Cutout Effect Studio is an open-source creative tool that transforms photographs
 
 All processing happens locally in your browser. Your images are never uploaded or stored.
 
-🌐 **Live Demo**  
-https://aligokdam.github.io/cutout.github.io/
+🌐 **Live Demo Link :** https://aligokdam.github.io/cutout.github.io/
 
 ---
 
