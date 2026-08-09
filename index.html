@@ -172,159 +172,190 @@
     transform:translateY(-6px) rotate(-45deg);
   }
 
-  /* ---- About / intro drawer ---- */
-  .about-overlay{
+  /* ============================================================
+     USER GUIDE — centered modal (replaces the old left drawer)
+     ============================================================ */
+
+  /* Full-screen dimmed + blurred backdrop. The app stays visible behind it. */
+  .guide-overlay{
     position:fixed;
     inset:0;
     z-index:200;
-    background:rgba(6,7,9,0.55);
-    backdrop-filter:blur(3px);
-    -webkit-backdrop-filter:blur(3px);
+    background:rgba(4,5,8,0.55);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
     opacity:0;
     pointer-events:none;
     transition:opacity .28s var(--ease);
   }
-  .about-overlay.open{
+  .guide-overlay.open{
     opacity:1;
     pointer-events:auto;
   }
-  .about-drawer{
+
+  /* Centered glass dialog — soft purple/blue bloom at the top, like the
+     app's own hero glow, so the dialog reads as part of the same product. */
+  .guide-modal{
     position:fixed;
-    top:0;
-    left:0;
-    bottom:0;
+    top:50%;
+    left:50%;
     z-index:201;
-    width:min(380px, 88vw);
-    background:linear-gradient(180deg, var(--bg-1), var(--bg-0));
-    border-right:1px solid var(--panel-border-strong);
-    box-shadow:var(--shadow-md);
-    padding:26px 24px 24px;
+    width:min(680px, calc(100vw - 40px));
+    max-height:80dvh;
+    max-height:80vh;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(167,139,250,0.20), transparent 55%),
+      rgba(20,21,30,0.92);
+    border:1px solid rgba(255,255,255,0.10);
+    border-radius:22px;
+    box-shadow:0 30px 80px rgba(0,0,0,0.55);
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    padding:32px 34px 28px;
     overflow-y:auto;
-    transform:translateX(-100%);
-    transition:transform .32s var(--ease);
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+
+    opacity:0;
+    pointer-events:none;
+    transform:translate(-50%, calc(-50% + 8px)) scale(.96);
+    transition:opacity .3s var(--ease), transform .3s var(--ease);
   }
-  .about-drawer.open{
-    transform:translateX(0);
+  .guide-modal.open{
+    opacity:1;
+    pointer-events:auto;
+    transform:translate(-50%, -50%) scale(1);
   }
-  .about-drawer .about-close{
+  @media (prefers-reduced-motion:reduce){
+    .guide-overlay,
+    .guide-modal{
+      transition:opacity .01s linear;
+    }
+    .guide-modal{
+      transform:translate(-50%, -50%) scale(1);
+    }
+  }
+
+  .guide-close{
     position:absolute;
-    top:16px;
-    right:16px;
-    width:34px;
-    height:34px;
+    top:18px;
+    right:18px;
+    width:40px;
+    height:40px;
     border-radius:50%;
     background:var(--panel);
     border:1px solid var(--panel-border);
     color:var(--text);
-    font-size:1rem;
+    font-size:1.05rem;
     line-height:1;
     padding:0;
     cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:border-color .2s var(--ease), background .2s var(--ease);
   }
-  .about-drawer .about-close:hover{
+  .guide-close:hover,
+  .guide-close:focus-visible{
     border-color:var(--accent);
+    background:rgba(94,177,255,0.08);
   }
-  .about-drawer h2{
-    font-size:1.3rem;
+
+  .guide-header{
+    padding-right:44px;
+    margin-bottom:18px;
+  }
+  .guide-header h2{
+    font-size:1.5rem;
     font-weight:700;
     letter-spacing:-0.02em;
-    margin:6px 0 18px;
-    padding-right:34px;
+    margin:0 0 8px;
+    line-height:1.2;
   }
-  .about-drawer .about-tagline{
+  .guide-tagline{
     color:var(--accent);
-    font-size:0.85rem;
+    font-size:0.86rem;
     font-weight:600;
-    margin:-10px 0 18px;
+    margin:0;
   }
-  .about-drawer p{
+
+  .guide-content p{
     color:var(--muted);
-    font-size:0.9rem;
+    font-size:0.92rem;
     line-height:1.6;
-    margin:0 0 16px;
+    margin:0 0 14px;
   }
-  .about-drawer h3{
-    font-size:0.78rem;
+  .guide-content h3{
+    font-size:0.76rem;
     text-transform:uppercase;
     letter-spacing:0.06em;
     color:var(--muted-2);
-    margin:22px 0 10px;
-  }
-  .about-drawer ol{
-    margin:0 0 4px;
-    padding-left:20px;
-    color:var(--muted);
-    font-size:0.88rem;
-    line-height:1.7;
-  }
-  .about-drawer ol li::marker{
-    color:var(--accent);
+    margin:22px 0 14px;
     font-weight:700;
   }
 
-  /* ---- Drawer: menu list panel ---- */
-  .about-nav-list{
-    list-style:none;
-    margin:0;
-    padding:0;
+  .guide-steps{
     display:flex;
     flex-direction:column;
-    gap:8px;
+    gap:14px;
   }
-  .about-nav-item{
-    width:100%;
+  .guide-step{
+    display:flex;
+    align-items:flex-start;
+    gap:14px;
+  }
+  .guide-step-num{
+    flex:none;
+    width:28px;
+    height:28px;
+    border-radius:50%;
     display:flex;
     align-items:center;
-    gap:14px;
-    text-align:left;
-    background:var(--panel);
-    border:1px solid var(--panel-border);
-    border-radius:var(--radius-md);
-    padding:14px 16px;
+    justify-content:center;
+    font-size:0.72rem;
+    font-weight:700;
+    font-family:ui-monospace, "SF Mono", "Roboto Mono", Menlo, monospace;
     color:var(--text);
-    cursor:pointer;
-    transition:border-color .2s var(--ease), background .2s var(--ease), transform .18s var(--ease);
+    background:linear-gradient(135deg, rgba(111,141,255,0.16), rgba(176,123,255,0.16));
+    border:1px solid var(--panel-border);
   }
-  .about-nav-item:hover,
-  .about-nav-item:focus-visible{
-    border-color:var(--accent);
-    background:rgba(94,177,255,0.07);
-    transform:translateX(2px);
-  }
-  .about-nav-icon{
-    font-size:1.3rem;
-    line-height:1;
-  }
-  .about-nav-text{
-    display:flex;
-    flex-direction:column;
-    gap:2px;
-  }
-  .about-nav-label{
-    font-weight:600;
-    font-size:0.94rem;
-  }
-  .about-nav-sub{
-    font-size:0.78rem;
-    color:var(--muted);
+  .guide-step p{
+    margin:0;
+    padding-top:4px;
+    color:var(--text);
+    font-size:0.9rem;
+    line-height:1.55;
   }
 
-  /* ---- Drawer: guide panel back button ---- */
-  .about-back{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    background:transparent;
-    border:none;
-    color:var(--accent);
-    font-weight:600;
-    font-size:0.85rem;
-    padding:0 0 20px;
-    margin-top:2px;
-    cursor:pointer;
+  .guide-divider{
+    height:1px;
+    background:var(--panel-border);
+    margin:24px 0 0;
   }
-  .about-back:hover{
-    text-decoration:underline;
+
+  .guide-privacy{
+    color:var(--muted-2) !important;
+    font-size:0.78rem !important;
+    line-height:1.55 !important;
+    margin:0 !important;
+    padding-top:14px !important;
+  }
+
+  @media (max-width:600px){
+    .guide-modal{
+      width:calc(100vw - 28px);
+      max-height:calc(100dvh - 32px);
+      max-height:calc(100vh - 32px);
+      padding:24px 20px 20px;
+      border-radius:20px;
+      padding-top:calc(24px + env(safe-area-inset-top, 0px));
+      padding-bottom:calc(20px + env(safe-area-inset-bottom, 0px));
+    }
+    .guide-header h2{ font-size:1.28rem; }
+    .guide-close{
+      top:14px;
+      right:14px;
+    }
   }
 
   /* ============================================================
@@ -632,7 +663,6 @@
   @media (max-width:600px){
     .lang-switch{ top:12px; right:12px; }
     .menu-btn{ top:12px; left:12px; width:38px; height:38px; }
-    .about-drawer{ padding:22px 18px 20px; }
     header.hero{ padding:52px 12px 20px; }
     .panel{ padding:18px; border-radius:var(--radius-md); }
     .upload-area{ padding:32px 16px; }
@@ -651,8 +681,8 @@
     id="menuBtn"
     type="button"
     aria-expanded="false"
-    aria-controls="aboutDrawer"
-    aria-label="Open project menu"
+    aria-controls="guideModal"
+    aria-label="Open user guide"
     data-i18n-aria="menuOpen"
   >
     <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
@@ -663,42 +693,49 @@
     <button id="langTrBtn" type="button" aria-pressed="false">TR</button>
   </div>
 
-  <div class="about-overlay" id="aboutOverlay"></div>
-  <nav class="about-drawer" id="aboutDrawer" aria-label="Project menu" aria-hidden="true">
-    <button class="about-close" id="aboutCloseBtn" type="button" aria-label="Close menu" data-i18n-aria="menuClose">✕</button>
+  <div class="guide-overlay" id="guideOverlay"></div>
+  <div
+    class="guide-modal"
+    id="guideModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="guideTitle"
+    aria-hidden="true"
+  >
+    <button class="guide-close" id="guideCloseBtn" type="button" aria-label="Close" data-i18n-aria="menuClose">✕</button>
 
-    <div class="about-panel" id="aboutPanelMenu">
-      <h2 data-i18n="menuTitle">Menu</h2>
-      <ul class="about-nav-list">
-        <li>
-          <button type="button" class="about-nav-item" id="navGuideBtn">
-            <span class="about-nav-icon" aria-hidden="true">📘</span>
-            <span class="about-nav-text">
-              <span class="about-nav-label" data-i18n="navGuideLabel">User Guide</span>
-              <span class="about-nav-sub" data-i18n="navGuideSub">How the app works</span>
-            </span>
-          </button>
-        </li>
-      </ul>
+    <div class="guide-header">
+      <h2 id="guideTitle" data-i18n="aboutTitle">Cutout Effect Studio</h2>
+      <p class="guide-tagline" data-i18n="aboutTagline">Turn any photo into bold, flat, poster-style art.</p>
     </div>
 
-    <div class="about-panel" id="aboutPanelGuide" hidden>
-      <button type="button" class="about-back" id="aboutBackBtn">
-        <span aria-hidden="true">←</span><span data-i18n="navHomeLabel">Cutout Effect Studio</span>
-      </button>
-      <h2 data-i18n="aboutTitle">Cutout Effect Studio</h2>
-      <p class="about-tagline" data-i18n="aboutTagline">Turn any photo into bold, flat, poster-style art.</p>
+    <div class="guide-content">
       <p data-i18n="aboutBody1">This tool takes a photo and reduces it to a small number of flat color tones with clean, simplified edges — the classic "cutout" or posterized look, similar to a paper collage or screen print.</p>
-      <p data-i18n="aboutBody2">Everything runs locally in your browser. Your photo is never uploaded to a server.</p>
+
       <h3 data-i18n="aboutHowTitle">How to use it</h3>
-      <ol>
-        <li data-i18n="aboutStep1">Upload a photo — click the upload area, drag & drop, or press Enter.</li>
-        <li data-i18n="aboutStep2">Adjust Number of Levels, Edge Simplicity and Edge Fidelity to shape the effect.</li>
-        <li data-i18n="aboutStep3">Use Reset to Original or Reset All Settings any time to start over.</li>
-        <li data-i18n="aboutStep4">Pick PNG or JPG and download your result.</li>
-      </ol>
+      <div class="guide-steps">
+        <div class="guide-step">
+          <span class="guide-step-num" aria-hidden="true">1</span>
+          <p data-i18n="aboutStep1">Upload a photo — click the upload area, drag &amp; drop, or press Enter.</p>
+        </div>
+        <div class="guide-step">
+          <span class="guide-step-num" aria-hidden="true">2</span>
+          <p data-i18n="aboutStep2">Adjust Number of Levels, Edge Simplicity and Edge Fidelity to shape the effect.</p>
+        </div>
+        <div class="guide-step">
+          <span class="guide-step-num" aria-hidden="true">3</span>
+          <p data-i18n="aboutStep3">Use Reset to Original or Reset All Settings any time to start over.</p>
+        </div>
+        <div class="guide-step">
+          <span class="guide-step-num" aria-hidden="true">4</span>
+          <p data-i18n="aboutStep4">Pick PNG or JPG and download your result.</p>
+        </div>
+      </div>
     </div>
-  </nav>
+
+    <div class="guide-divider"></div>
+    <p class="guide-privacy" data-i18n="aboutBody2">Privacy: Everything happens in your browser. Your photo never leaves your device and is never stored on a server.</p>
+  </div>
 
   <header class="hero fade-in">
     <h1 class="title" data-i18n="appTitle">Cutout Effect Studio</h1>
@@ -851,8 +888,8 @@ const I18N = {
     formatPng: "PNG",
     formatJpg: "JPG",
     noImage: "No image loaded yet",
-    menuOpen: "Open project menu",
-    menuClose: "Close menu",
+    menuOpen: "Open user guide",
+    menuClose: "Close",
     menuTitle: "Menu",
     navHomeLabel: "Cutout Effect Studio",
     navGuideLabel: "User Guide",
@@ -860,7 +897,7 @@ const I18N = {
     aboutTitle: "Cutout Effect Studio",
     aboutTagline: "Turn any photo into bold, flat, poster-style art.",
     aboutBody1: "This tool takes a photo and reduces it to a small number of flat color tones with clean, simplified edges — the classic \"cutout\" or posterized look, similar to a paper collage or screen print.",
-    aboutBody2: "Everything runs locally in your browser. Your photo is never uploaded to a server.",
+    aboutBody2: "Privacy: Everything happens in your browser. Your photo never leaves your device and is never stored on a server.",
     aboutHowTitle: "How to use it",
     aboutStep1: "Upload a photo — click the upload area, drag & drop, or press Enter.",
     aboutStep2: "Adjust Number of Levels, Edge Simplicity and Edge Fidelity to shape the effect.",
@@ -897,8 +934,8 @@ const I18N = {
     formatPng: "PNG",
     formatJpg: "JPG",
     noImage: "Henüz görsel yüklenmedi",
-    menuOpen: "Proje menüsünü aç",
-    menuClose: "Menüyü kapat",
+    menuOpen: "Kullanım kılavuzunu aç",
+    menuClose: "Kapat",
     menuTitle: "Menü",
     navHomeLabel: "Cutout Effect Studio",
     navGuideLabel: "Kullanım Kılavuzu",
@@ -906,7 +943,7 @@ const I18N = {
     aboutTitle: "Cutout Effect Studio",
     aboutTagline: "Herhangi bir fotoğrafı kalın, düz tonlu, poster tarzı bir esere dönüştürün.",
     aboutBody1: "Bu araç bir fotoğrafı alır ve onu az sayıda düz renk tonuna, sade ve temiz kenarlarla indirger — kağıt kolaj veya serigrafi baskıya benzeyen klasik \"cutout\" / posterize görünümü.",
-    aboutBody2: "Her şey tarayıcınızda, yerel olarak çalışır. Fotoğrafınız hiçbir sunucuya yüklenmez.",
+    aboutBody2: "Gizlilik: Her şey tarayıcınızda gerçekleşir. Verileriniz cihazınızdan çıkmaz ve hiçbir sunucuda saklanmaz.",
     aboutHowTitle: "Nasıl kullanılır",
     aboutStep1: "Bir fotoğraf yükleyin — yükleme alanına tıklayın, sürükleyip bırakın veya Enter'a basın.",
     aboutStep2: "Efekti şekillendirmek için Seviye Sayısı, Kenar Sadeliği ve Kenar Netliği'ni ayarlayın.",
@@ -944,6 +981,11 @@ class CutoutEffectApp {
   static MAX_FILE_SIZE_BYTES = 40 * 1024 * 1024; // 40MB
   static MAX_CANVAS_DIMENSION = 4096; // caps memory/CPU use on huge photos, while keeping full clarity for most photos
 
+  // Selector for elements that can receive keyboard focus, used by the
+  // guide modal's focus trap.
+  static FOCUSABLE_SELECTOR =
+    'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
   constructor(root) {
     // Cache DOM references once.
     this.dom = {
@@ -966,13 +1008,9 @@ class CutoutEffectApp {
       langEnBtn: root.getElementById("langEnBtn"),
       langTrBtn: root.getElementById("langTrBtn"),
       menuBtn: root.getElementById("menuBtn"),
-      aboutOverlay: root.getElementById("aboutOverlay"),
-      aboutDrawer: root.getElementById("aboutDrawer"),
-      aboutCloseBtn: root.getElementById("aboutCloseBtn"),
-      aboutPanelMenu: root.getElementById("aboutPanelMenu"),
-      aboutPanelGuide: root.getElementById("aboutPanelGuide"),
-      navGuideBtn: root.getElementById("navGuideBtn"),
-      aboutBackBtn: root.getElementById("aboutBackBtn"),
+      guideOverlay: root.getElementById("guideOverlay"),
+      guideModal: root.getElementById("guideModal"),
+      guideCloseBtn: root.getElementById("guideCloseBtn"),
     };
 
     this.lang = "en";
@@ -985,6 +1023,12 @@ class CutoutEffectApp {
     this.currentObjectURL = null;  // tracked so we can revoke it and avoid memory leaks
     this._pendingRender = false;   // coalesces rapid slider drags into one render per frame
     this.wasmModule = null;        // set once the WASM engine has loaded successfully
+
+    // Guide modal state
+    this._guideOpen = false;
+    this._guideLastFocused = null;   // element to restore focus to on close
+    this._bodyOverflowBeforeGuide = ""; // previous body overflow, restored on close
+    this._guideKeydownHandler = null;   // bound Escape/Tab-trap handler, attached only while open
 
     this._bindEvents();
     this._loadWasmModule();
@@ -1032,41 +1076,93 @@ class CutoutEffectApp {
     );
   }
 
-  /* ---------------- About drawer ---------------- */
+  /* ---------------- User Guide modal ----------------
 
-  openAboutDrawer() {
-    this.showMenuPanel(); // always start on the menu list when (re)opened
-    this.dom.aboutOverlay.classList.add("open");
-    this.dom.aboutDrawer.classList.add("open");
-    this.dom.aboutDrawer.setAttribute("aria-hidden", "false");
+     A single centered, dismissible dialog (see .guide-overlay /
+     .guide-modal in the stylesheet). Tapping the menu button opens it
+     directly — there's no intermediate navigation panel. Closing
+     restores focus to the menu button and unlocks page scrolling.
+  ------------------------------------------------------------------- */
+
+  openGuideModal() {
+    if (this._guideOpen) return;
+    this._guideOpen = true;
+
+    this._guideLastFocused = document.activeElement;
+
+    this.dom.guideOverlay.classList.add("open");
+    this.dom.guideModal.classList.add("open");
+    this.dom.guideModal.setAttribute("aria-hidden", "false");
     this.dom.menuBtn.setAttribute("aria-expanded", "true");
+
+    // Lock background scrolling while the modal is open (also prevents
+    // the page from scrolling behind the modal on iPad/iOS Safari).
+    this._bodyOverflowBeforeGuide = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    // Move focus into the dialog and trap Tab/Shift+Tab within it.
+    this.dom.guideCloseBtn.focus();
+    this._guideKeydownHandler = (e) => this._handleGuideKeydown(e);
+    document.addEventListener("keydown", this._guideKeydownHandler);
   }
 
-  closeAboutDrawer() {
-    this.dom.aboutOverlay.classList.remove("open");
-    this.dom.aboutDrawer.classList.remove("open");
-    this.dom.aboutDrawer.setAttribute("aria-hidden", "true");
+  closeGuideModal() {
+    if (!this._guideOpen) return;
+    this._guideOpen = false;
+
+    this.dom.guideOverlay.classList.remove("open");
+    this.dom.guideModal.classList.remove("open");
+    this.dom.guideModal.setAttribute("aria-hidden", "true");
     this.dom.menuBtn.setAttribute("aria-expanded", "false");
-    this.dom.menuBtn.focus();
+
+    document.body.style.overflow = this._bodyOverflowBeforeGuide;
+
+    if (this._guideKeydownHandler) {
+      document.removeEventListener("keydown", this._guideKeydownHandler);
+      this._guideKeydownHandler = null;
+    }
+
+    // Restore focus to whatever opened the dialog (normally the menu button).
+    const toFocus = this._guideLastFocused || this.dom.menuBtn;
+    if (toFocus && typeof toFocus.focus === "function") toFocus.focus();
+    this._guideLastFocused = null;
   }
 
-  toggleAboutDrawer() {
-    if (this.dom.aboutDrawer.classList.contains("open")) {
-      this.closeAboutDrawer();
+  toggleGuideModal() {
+    if (this._guideOpen) {
+      this.closeGuideModal();
     } else {
-      this.openAboutDrawer();
+      this.openGuideModal();
     }
   }
 
-  showMenuPanel() {
-    this.dom.aboutPanelGuide.hidden = true;
-    this.dom.aboutPanelMenu.hidden = false;
-  }
+  _handleGuideKeydown(e) {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      this.closeGuideModal();
+      return;
+    }
+    if (e.key !== "Tab") return;
 
-  showGuidePanel() {
-    this.dom.aboutPanelMenu.hidden = true;
-    this.dom.aboutPanelGuide.hidden = false;
-    this.dom.aboutPanelGuide.scrollTop = 0;
+    // Simple focus trap: cycle Tab/Shift+Tab within the modal's
+    // focusable elements so keyboard focus never escapes to the page
+    // underneath while the dialog is open.
+    const focusable = Array.from(
+      this.dom.guideModal.querySelectorAll(CutoutEffectApp.FOCUSABLE_SELECTOR)
+    ).filter((el) => el.offsetParent !== null);
+
+    if (focusable.length === 0) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
   }
 
   /* ---------------- Download format ---------------- */
@@ -1378,6 +1474,18 @@ class CutoutEffectApp {
         Applying this per-channel collapses many nearby shades into
         identical flat colors, producing the bold, poster-like look.
         Alpha is left untouched throughout.
+
+        SPECIAL CASE — levels = 2 (the minimum): quantizing each of R,
+        G, and B independently at 2 levels snaps every channel to
+        either 0 or 255 on its own, so a pixel can land on up to 8
+        different combinations (pure red, yellow, cyan, etc.) instead
+        of just black or white — the result looks tinted rather than a
+        clean two-tone cutout. At exactly 2 levels we instead quantize
+        by the pixel's overall luminance and output pure black or pure
+        white, so the minimum setting is always a true two-color
+        result. From 3 levels upward the per-channel method is used as
+        before, which is what keeps the poster-style color look at
+        every other setting.
   --------------------------------------------------------------------- */
 
   posterizeChannel(value, stepSize, levels) {
@@ -1385,6 +1493,12 @@ class CutoutEffectApp {
     let bucketIndex = Math.round(value / stepSize);
     bucketIndex = Math.min(levels - 1, Math.max(0, bucketIndex));
     return Math.round(bucketIndex * stepSize);
+  }
+
+  // Perceptual luminance (ITU-R BT.601), used only for the levels=2
+  // black/white special case below.
+  luminance(r, g, b) {
+    return r * 0.299 + g * 0.587 + b * 0.114;
   }
 
   // Renders the effect using the WASM engine when available and healthy,
@@ -1395,7 +1509,12 @@ class CutoutEffectApp {
   applyCutoutEffect(levels, simplicity = 0, fidelity = 3) {
     if (!this.originalImageData || !this.ctx) return;
 
-    if (this.wasmModule) {
+    // The levels=2 black/white fix below lives only in the JS path (see
+    // _applyCutoutEffectJS). If a compiled WASM engine is ever present,
+    // we can't guarantee it has the same special case, so route the
+    // minimum-levels case through JS explicitly rather than risk a
+    // tinted result at the one setting that must be pure black/white.
+    if (this.wasmModule && levels !== 2) {
       try {
         this._applyCutoutEffectWasm(levels, simplicity, fidelity);
         return;
@@ -1451,16 +1570,25 @@ class CutoutEffectApp {
     const imgData = this.ctx.createImageData(width, height);
     const dst = imgData.data;
     const stepSize = 255 / (levels - 1);
+    const isBlackAndWhiteMinimum = levels === 2;
 
     for (let i = 0; i < src.length; i += 4) {
       const r = src[i] * originalWeight + blurred[i] * blurWeight;
       const g = src[i + 1] * originalWeight + blurred[i + 1] * blurWeight;
       const b = src[i + 2] * originalWeight + blurred[i + 2] * blurWeight;
 
-      dst[i]     = this.posterizeChannel(r, stepSize, levels); // Red
-      dst[i + 1] = this.posterizeChannel(g, stepSize, levels); // Green
-      dst[i + 2] = this.posterizeChannel(b, stepSize, levels); // Blue
-      dst[i + 3] = src[i + 3];                                 // Alpha untouched
+      if (isBlackAndWhiteMinimum) {
+        // Threshold by overall brightness instead of quantizing R/G/B
+        // independently, so the minimum setting is always a clean
+        // black-or-white result rather than a tinted one.
+        const tone = this.luminance(r, g, b) >= 127.5 ? 255 : 0;
+        dst[i] = dst[i + 1] = dst[i + 2] = tone;
+      } else {
+        dst[i]     = this.posterizeChannel(r, stepSize, levels); // Red
+        dst[i + 1] = this.posterizeChannel(g, stepSize, levels); // Green
+        dst[i + 2] = this.posterizeChannel(b, stepSize, levels); // Blue
+      }
+      dst[i + 3] = src[i + 3];                                   // Alpha untouched
     }
 
     this.ctx.putImageData(imgData, 0, 0);
@@ -1638,23 +1766,19 @@ class CutoutEffectApp {
       resetBtn, resetSlidersBtn, downloadBtn,
       formatPngBtn, formatJpgBtn,
       langEnBtn, langTrBtn,
-      menuBtn, aboutOverlay, aboutDrawer, aboutCloseBtn,
-      navGuideBtn, aboutBackBtn,
+      menuBtn, guideOverlay, guideCloseBtn,
     } = this.dom;
 
     langEnBtn.addEventListener("click", () => this.setLanguage("en"));
     langTrBtn.addEventListener("click", () => this.setLanguage("tr"));
 
-    menuBtn.addEventListener("click", () => this.toggleAboutDrawer());
-    aboutCloseBtn.addEventListener("click", () => this.closeAboutDrawer());
-    navGuideBtn.addEventListener("click", () => this.showGuidePanel());
-    aboutBackBtn.addEventListener("click", () => this.closeAboutDrawer());
-    aboutOverlay.addEventListener("click", () => this.closeAboutDrawer());
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && aboutDrawer.classList.contains("open")) {
-        this.closeAboutDrawer();
-      }
-    });
+    // Menu button opens the centered User Guide modal directly.
+    menuBtn.addEventListener("click", () => this.toggleGuideModal());
+    guideCloseBtn.addEventListener("click", () => this.closeGuideModal());
+    // Clicking the dimmed backdrop closes the modal; clicks inside the
+    // modal itself never reach this listener because they don't hit
+    // the overlay element.
+    guideOverlay.addEventListener("click", () => this.closeGuideModal());
 
     formatPngBtn.addEventListener("click", () => this.setDownloadFormat("png"));
     formatJpgBtn.addEventListener("click", () => this.setDownloadFormat("jpg"));
