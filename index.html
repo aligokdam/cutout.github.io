@@ -96,37 +96,6 @@
     border-radius:6px;
   }
 
-  /* ---- Language switcher (fixed, never shifts layout) ---- */
-  .lang-switch{
-    position:fixed;
-    top:18px;
-    right:18px;
-    z-index:100;
-    display:inline-flex;
-    background:var(--panel);
-    border:1px solid var(--panel-border);
-    border-radius:999px;
-    padding:4px;
-    backdrop-filter:blur(14px);
-    -webkit-backdrop-filter:blur(14px);
-    box-shadow:var(--shadow-md);
-  }
-  .lang-switch button{
-    border:none;
-    background:transparent;
-    color:var(--muted);
-    font-size:0.8rem;
-    font-weight:700;
-    padding:6px 12px;
-    border-radius:999px;
-    cursor:pointer;
-    transition:background .2s var(--ease), color .2s var(--ease);
-  }
-  .lang-switch button[aria-pressed="true"]{
-    background:linear-gradient(135deg, var(--accent), var(--accent-2));
-    color:#0b0c0e;
-  }
-
   /* ---- Menu (hamburger) button, fixed top-left ---- */
   .menu-btn{
     position:fixed;
@@ -661,7 +630,6 @@
   }
 
   @media (max-width:600px){
-    .lang-switch{ top:12px; right:12px; }
     .menu-btn{ top:12px; left:12px; width:38px; height:38px; }
     header.hero{ padding:52px 12px 20px; }
     .panel{ padding:18px; border-radius:var(--radius-md); }
@@ -671,6 +639,155 @@
     .controls-actions button{ flex:1; }
     .actions{ justify-content:stretch; }
     .actions button{ flex:1; }
+  }
+
+  /* ============================================================
+     LANGUAGE SELECTOR — reusable globe icon + glassmorphism panel
+     (see the LanguageSelector module in <script> for the JS side;
+     these classes are intentionally app-agnostic so both the CSS
+     and JS can be lifted into other projects unchanged)
+     ============================================================ */
+  .lang-trigger{
+    position:fixed;
+    top:18px;
+    right:18px;
+    z-index:100;
+    width:42px;
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:999px;
+    cursor:pointer;
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    box-shadow:var(--shadow-md);
+    transition:border-color .2s var(--ease), background .2s var(--ease), transform .18s var(--ease);
+    padding:0;
+  }
+  .lang-trigger:hover,
+  .lang-trigger:focus-visible{
+    border-color:var(--accent);
+    background:rgba(94,177,255,0.08);
+  }
+  .lang-trigger:active{
+    transform:scale(0.96);
+  }
+  .lang-trigger svg{
+    width:20px;
+    height:20px;
+    display:block;
+  }
+  .lang-trigger svg circle,
+  .lang-trigger svg path,
+  .lang-trigger svg line,
+  .lang-trigger svg ellipse{
+    stroke:#f5f6f8;
+  }
+
+  .lang-panel{
+    position:fixed;
+    top:68px;
+    right:18px;
+    z-index:210;
+    width:min(300px, calc(100vw - 32px));
+    max-height:min(480px, calc(100vh - 100px));
+    background:
+      radial-gradient(circle at 100% 0%, rgba(167,139,250,0.18), transparent 55%),
+      rgba(20,21,30,0.94);
+    border:1px solid rgba(255,255,255,0.10);
+    border-radius:18px;
+    box-shadow:0 24px 60px rgba(0,0,0,0.5);
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+
+    opacity:0;
+    pointer-events:none;
+    transform:translateY(-8px) scale(.97);
+    transform-origin:top right;
+    transition:opacity .22s var(--ease), transform .22s var(--ease);
+  }
+  .lang-panel.open{
+    opacity:1;
+    pointer-events:auto;
+    transform:translateY(0) scale(1);
+  }
+  html[dir="rtl"] .lang-panel{
+    right:auto;
+    left:18px;
+    transform-origin:top left;
+  }
+
+  .lang-panel-header{
+    padding:14px 16px 10px;
+    font-size:0.72rem;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.07em;
+    color:var(--muted-2);
+    border-bottom:1px solid var(--panel-border);
+    flex:none;
+  }
+
+  .lang-panel-list{
+    list-style:none;
+    margin:0;
+    padding:6px;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .lang-option{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    width:100%;
+    text-align:left;
+    background:transparent;
+    border:1px solid transparent;
+    color:var(--text);
+    font-size:0.92rem;
+    font-weight:500;
+    padding:11px 12px;
+    border-radius:var(--radius-sm);
+    cursor:pointer;
+    transition:background .15s var(--ease), border-color .15s var(--ease);
+  }
+  html[dir="rtl"] .lang-option{
+    text-align:right;
+  }
+  .lang-option:hover,
+  .lang-option:focus-visible{
+    background:rgba(255,255,255,0.06);
+  }
+  .lang-option[aria-selected="true"]{
+    background:rgba(94,177,255,0.12);
+    border-color:rgba(94,177,255,0.35);
+    color:#fff;
+  }
+  .lang-option .lang-check{
+    width:16px;
+    height:16px;
+    flex:none;
+    opacity:0;
+    color:var(--accent);
+  }
+  .lang-option[aria-selected="true"] .lang-check{
+    opacity:1;
+  }
+
+  @media (max-width:600px){
+    .lang-trigger{ top:12px; right:12px; width:38px; height:38px; }
+    .lang-trigger svg{ width:18px; height:18px; }
+    .lang-panel{ top:60px; right:12px; width:min(280px, calc(100vw - 24px)); }
+    html[dir="rtl"] .lang-panel{ left:12px; }
+    .lang-option{ padding:13px 12px; font-size:0.95rem; }
   }
 </style>
 </head>
@@ -688,9 +805,39 @@
     <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
   </button>
 
-  <div class="lang-switch" role="group" aria-label="Language selector">
-    <button id="langEnBtn" type="button" aria-pressed="true">EN</button>
-    <button id="langTrBtn" type="button" aria-pressed="false">TR</button>
+  <!-- ============================================================
+       LANGUAGE SELECTOR — globe trigger + glassmorphism panel.
+       Reusable: see the LanguageSelector class in <script>.
+       ============================================================ -->
+  <button
+    class="lang-trigger"
+    id="langTrigger"
+    type="button"
+    aria-haspopup="true"
+    aria-expanded="false"
+    aria-controls="langPanel"
+    aria-label="Language"
+    data-i18n-aria="langLabel"
+  >
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" stroke-width="1.6"/>
+      <ellipse cx="12" cy="12" rx="4" ry="9" stroke-width="1.6"/>
+      <line x1="3" y1="12" x2="21" y2="12" stroke-width="1.6"/>
+      <path d="M4.6 7.5c1.9 1.1 4.6 1.8 7.4 1.8s5.5-.7 7.4-1.8" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M4.6 16.5c1.9-1.1 4.6-1.8 7.4-1.8s5.5.7 7.4 1.8" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+  </button>
+
+  <div
+    class="lang-panel"
+    id="langPanel"
+    role="listbox"
+    aria-label="Language"
+    aria-hidden="true"
+    data-i18n-aria-label="langLabel"
+  >
+    <div class="lang-panel-header" id="langPanelHeader" data-i18n="langLabel">Language</div>
+    <ul class="lang-panel-list" id="langPanelList"></ul>
   </div>
 
   <div class="guide-overlay" id="guideOverlay"></div>
@@ -868,102 +1015,1582 @@
 // and X-Frame-Options: DENY as actual HTTP headers.
 
 /* ==================================================================
-   i18n dictionary (English / Turkish)
+   REUSABLE LANGUAGE SYSTEM
+   ------------------------------------------------------------------
+   Everything below down to "END REUSABLE LANGUAGE SYSTEM" has no
+   dependency on Cutout Effect Studio and can be copy-pasted as-is
+   (plus the .lang-* CSS block above) into any other project that
+   shares this dark-glassmorphism design system. Only the app-specific
+   TRANSLATIONS dictionary needs to be swapped per project — the
+   LANGUAGES config, storage key, RTL handling, and LanguageSelector
+   UI controller are all generic.
+
+   To reuse elsewhere:
+     1. Copy the .lang-trigger / .lang-panel / .lang-option CSS rules.
+     2. Copy the <button id="langTrigger">/<div id="langPanel"> markup.
+     3. Copy the LANGUAGES array and LanguageSelector class below.
+     4. Replace TRANSLATIONS with your own app's dictionary — same
+        24 language codes, your own keys.
+     5. Call `new LanguageSelector({ translations: TRANSLATIONS, ... })`
+        and use `selector.t("your.key")` wherever you render text.
    ================================================================== */
-const I18N = {
-  en: {
-    appTitle: "Cutout Effect Studio",
-    appSubtitle: "Upload a photo, posterize it into bold flat tones, and export a polished cutout-style image — all in real time.",
-    uploadPrimary: "Click, drag & drop, or press Enter to upload an image",
-    uploadPrimaryReplace: "Click, drag & drop, or press Enter to replace this image",
-    uploadHint: "PNG, JPG, JPEG, WEBP, HEIC or HEIF · up to 40MB",
-    levelsLabel: "Number of Levels",
-    simplicityLabel: "Edge Simplicity",
-    fidelityLabel: "Edge Fidelity",
-    resetAllSettings: "Reset All Settings",
-    resetToOriginal: "Reset to Original",
-    download: "Download PNG",
-    downloadPng: "Download PNG",
-    downloadJpg: "Download JPG",
-    formatPng: "PNG",
-    formatJpg: "JPG",
-    noImage: "No image loaded yet",
-    menuOpen: "Open user guide",
-    menuClose: "Close",
-    menuTitle: "Menu",
-    navHomeLabel: "Cutout Effect Studio",
-    navGuideLabel: "User Guide",
-    navGuideSub: "How the app works",
-    aboutTitle: "Cutout Effect Studio",
-    aboutTagline: "Turn any photo into bold, flat, poster-style art.",
-    aboutBody1: "This tool takes a photo and reduces it to a small number of flat color tones with clean, simplified edges — the classic \"cutout\" or posterized look, similar to a paper collage or screen print.",
-    aboutBody2: "Privacy: Everything happens in your browser. Your photo never leaves your device and is never stored on a server.",
-    aboutHowTitle: "How to use it",
-    aboutStep1: "Upload a photo — click the upload area, drag & drop, or press Enter.",
-    aboutStep2: "Adjust Number of Levels, Edge Simplicity and Edge Fidelity to shape the effect.",
-    aboutStep3: "Use Reset to Original or Reset All Settings any time to start over.",
-    aboutStep4: "Pick PNG or JPG and download your result.",
-    errorNoFile: "No file was selected.",
-    errorUnsupportedFile: "Unsupported file type. Please upload a PNG, JPG, JPEG, WEBP, HEIC, or HEIF image.",
-    errorTooLarge: "File is too large. Maximum allowed size is 40MB.",
-    errorEmptyFile: "The selected file appears to be empty.",
-    errorHeic: "This looks like a HEIC/HEIF photo (common on iPhone/Mac), even if its name ends in .jpg. Please convert it to JPEG or PNG first — on Mac: open it in Preview → File → Export, choose JPEG/PNG — then re-upload.",
-    errorInvalidImage: "This file could not be read as a valid image.",
-    errorProcessing: "Something went wrong while processing that image.",
-    errorExport: "Could not export the image. Please try again.",
-    statusLoaded: "Image loaded. Adjust the slider to preview the cutout effect.",
-    statusResetOriginal: "Image reset to its closest-to-original state.",
-    statusResetSettings: "All settings reset to their defaults.",
-    statusDownloadedNewTab: "Download started — if nothing happened, use the image opened in the new tab and save it from there.",
-    statusDownloadedSaveAs: "Download started. If it didn't work, right-click the image above and choose \"Save Image As…\".",
+
+// 24 supported languages, alphabetized by canonical English name.
+// Each entry's "name" is the language's own native name (never a
+// country name) — this ordering and list is what the dropdown renders.
+const LANGUAGES = [
+  {
+    "code": "en",
+    "name": "English",
+    "englishName": "English",
+    "rtl": false,
+    "group": "latin"
   },
-  tr: {
-    appTitle: "Cutout Effect Studio",
-    appSubtitle: "Bir fotoğraf yükleyin, kalın düz tonlara ayırın (posterize) ve şık bir cutout-tarzı görsel olarak anında dışa aktarın.",
-    uploadPrimary: "Görsel yüklemek için tıklayın, sürükleyip bırakın veya Enter'a basın",
-    uploadPrimaryReplace: "Değiştirmek için tıklayın, sürükleyip bırakın veya Enter'a basın",
-    uploadHint: "PNG, JPG, JPEG, WEBP, HEIC veya HEIF · en fazla 40MB",
-    levelsLabel: "Seviye Sayısı",
-    simplicityLabel: "Kenar Sadeliği",
-    fidelityLabel: "Kenar Netliği",
-    resetAllSettings: "Tüm Ayarları Sıfırla",
-    resetToOriginal: "Orijinale Sıfırla",
-    download: "PNG İndir",
-    downloadPng: "PNG İndir",
-    downloadJpg: "JPG İndir",
-    formatPng: "PNG",
-    formatJpg: "JPG",
-    noImage: "Henüz görsel yüklenmedi",
-    menuOpen: "Kullanım kılavuzunu aç",
-    menuClose: "Kapat",
-    menuTitle: "Menü",
-    navHomeLabel: "Cutout Effect Studio",
-    navGuideLabel: "Kullanım Kılavuzu",
-    navGuideSub: "Uygulama nasıl çalışır",
-    aboutTitle: "Cutout Effect Studio",
-    aboutTagline: "Herhangi bir fotoğrafı kalın, düz tonlu, poster tarzı bir esere dönüştürün.",
-    aboutBody1: "Bu araç bir fotoğrafı alır ve onu az sayıda düz renk tonuna, sade ve temiz kenarlarla indirger — kağıt kolaj veya serigrafi baskıya benzeyen klasik \"cutout\" / posterize görünümü.",
-    aboutBody2: "Gizlilik: Her şey tarayıcınızda gerçekleşir. Verileriniz cihazınızdan çıkmaz ve hiçbir sunucuda saklanmaz.",
-    aboutHowTitle: "Nasıl kullanılır",
-    aboutStep1: "Bir fotoğraf yükleyin — yükleme alanına tıklayın, sürükleyip bırakın veya Enter'a basın.",
-    aboutStep2: "Efekti şekillendirmek için Seviye Sayısı, Kenar Sadeliği ve Kenar Netliği'ni ayarlayın.",
-    aboutStep3: "İstediğiniz zaman Orijinale Sıfırla veya Tüm Ayarları Sıfırla ile baştan başlayın.",
-    aboutStep4: "PNG veya JPG seçin ve sonucu indirin.",
-    errorNoFile: "Hiçbir dosya seçilmedi.",
-    errorUnsupportedFile: "Desteklenmeyen dosya türü. Lütfen PNG, JPG, JPEG, WEBP, HEIC veya HEIF yükleyin.",
-    errorTooLarge: "Dosya çok büyük. İzin verilen maksimum boyut 40MB.",
-    errorEmptyFile: "Seçilen dosya boş görünüyor.",
-    errorHeic: "Bu bir HEIC/HEIF fotoğrafı gibi görünüyor (iPhone/Mac'te yaygın), adı .jpg ile bitse bile. Lütfen önce JPEG veya PNG'ye çevirin — Mac'te: Preview → File → Export ile JPEG/PNG seçin — sonra tekrar yükleyin.",
-    errorInvalidImage: "Bu dosya geçerli bir görsel olarak okunamadı.",
-    errorProcessing: "Bu görsel işlenirken bir sorun oluştu.",
-    errorExport: "Görsel dışa aktarılamadı. Lütfen tekrar deneyin.",
-    statusLoaded: "Görsel yüklendi. Efekti önizlemek için sliderı hareket ettirin.",
-    statusResetOriginal: "Görsel, orijinaline en yakın haline sıfırlandı.",
-    statusResetSettings: "Tüm ayarlar varsayılanlarına sıfırlandı.",
-    statusDownloadedNewTab: "İndirme başladı — hiçbir şey olmadıysa, yeni sekmede açılan görseli oradan kaydedin.",
-    statusDownloadedSaveAs: "İndirme başladı. Çalışmadıysa, yukarıdaki görsele sağ tıklayıp \"Görseli Farklı Kaydet…\" seçin.",
+  {
+    "code": "fil",
+    "name": "Filipino",
+    "englishName": "Filipino",
+    "rtl": false,
+    "group": "latin"
   },
+  {
+    "code": "fr",
+    "name": "Français",
+    "englishName": "French",
+    "rtl": false,
+    "group": "latin"
+  },
+  {
+    "code": "de",
+    "name": "Deutsch",
+    "englishName": "German",
+    "rtl": false,
+    "group": "latin"
+  },
+  {
+    "code": "ha",
+    "name": "Hausa",
+    "englishName": "Hausa",
+    "rtl": false,
+    "group": "latin"
+  },
+  {
+    "code": "id",
+    "name": "Bahasa Indonesia",
+    "englishName": "Indonesian",
+    "rtl": false,
+    "group": "latin"
+  },
+  {
+    "code": "it",
+    "name": "Italiano",
+    "englishName": "Italian",
+    "rtl": false,
+    "group": "latin"
+  },
+  {
+    "code": "pt",
+    "name": "Português",
+    "englishName": "Portuguese",
+    "rtl": false,
+    "group": "latin"
+  },
+  {
+    "code": "es",
+    "name": "Español",
+    "englishName": "Spanish",
+    "rtl": false,
+    "group": "latin"
+  },
+  {
+    "code": "tr",
+    "name": "Türkçe",
+    "englishName": "Turkish",
+    "rtl": false,
+    "group": "latin"
+  },
+  {
+    "code": "vi",
+    "name": "Tiếng Việt",
+    "englishName": "Vietnamese",
+    "rtl": false,
+    "group": "latin"
+  },
+  {
+    "code": "ar",
+    "name": "العربية",
+    "englishName": "Arabic",
+    "rtl": true,
+    "group": "arabic"
+  },
+  {
+    "code": "fa",
+    "name": "فارسی",
+    "englishName": "Persian",
+    "rtl": true,
+    "group": "arabic"
+  },
+  {
+    "code": "ur",
+    "name": "اردو",
+    "englishName": "Urdu",
+    "rtl": true,
+    "group": "arabic"
+  },
+  {
+    "code": "ru",
+    "name": "Русский",
+    "englishName": "Russian",
+    "rtl": false,
+    "group": "cyrillic"
+  },
+  {
+    "code": "zh",
+    "name": "中文",
+    "englishName": "Chinese",
+    "rtl": false,
+    "group": "cjk"
+  },
+  {
+    "code": "ja",
+    "name": "日本語",
+    "englishName": "Japanese",
+    "rtl": false,
+    "group": "cjk"
+  },
+  {
+    "code": "ko",
+    "name": "한국어",
+    "englishName": "Korean",
+    "rtl": false,
+    "group": "cjk"
+  },
+  {
+    "code": "hi",
+    "name": "हिन्दी",
+    "englishName": "Hindi",
+    "rtl": false,
+    "group": "devanagari"
+  },
+  {
+    "code": "mr",
+    "name": "मराठी",
+    "englishName": "Marathi",
+    "rtl": false,
+    "group": "devanagari"
+  },
+  {
+    "code": "bn",
+    "name": "বাংলা",
+    "englishName": "Bengali",
+    "rtl": false,
+    "group": "bengali"
+  },
+  {
+    "code": "pa",
+    "name": "ਪੰਜਾਬੀ",
+    "englishName": "Punjabi",
+    "rtl": false,
+    "group": "gurmukhi"
+  },
+  {
+    "code": "ta",
+    "name": "தமிழ்",
+    "englishName": "Tamil",
+    "rtl": false,
+    "group": "tamil"
+  },
+  {
+    "code": "te",
+    "name": "తెలుగు",
+    "englishName": "Telugu",
+    "rtl": false,
+    "group": "telugu"
+  }
+];
+
+const LANG_STORAGE_KEY = "preferredLanguage";
+
+/* ---------------- Translation dictionary (Cutout Effect Studio) ----
+   App-specific. Every one of the 24 language codes above has a full
+   set of keys; English is also used as the fallback for any key
+   missing in another language, so the UI never shows an untranslated
+   raw key. ------------------------------------------------------- */
+const TRANSLATIONS = {
+  "en": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "Upload a photo, posterize it into bold flat tones, and export a polished cutout-style image — all in real time.",
+    "uploadPrimary": "Click, drag & drop, or press Enter to upload an image",
+    "uploadPrimaryReplace": "Click, drag & drop, or press Enter to replace this image",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC or HEIF · up to 40MB",
+    "levelsLabel": "Number of Levels",
+    "simplicityLabel": "Edge Simplicity",
+    "fidelityLabel": "Edge Fidelity",
+    "resetAllSettings": "Reset All Settings",
+    "resetToOriginal": "Reset to Original",
+    "download": "Download PNG",
+    "downloadPng": "Download PNG",
+    "downloadJpg": "Download JPG",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "No image loaded yet",
+    "menuOpen": "Open user guide",
+    "menuClose": "Close",
+    "menuTitle": "Menu",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "User Guide",
+    "navGuideSub": "How the app works",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "Turn any photo into bold, flat, poster-style art.",
+    "aboutBody1": "This tool takes a photo and reduces it to a small number of flat color tones with clean, simplified edges — the classic \"cutout\" or posterized look, similar to a paper collage or screen print.",
+    "aboutBody2": "Privacy: Everything happens in your browser. Your photo never leaves your device and is never stored on a server.",
+    "aboutHowTitle": "How to use it",
+    "aboutStep1": "Upload a photo — click the upload area, drag & drop, or press Enter.",
+    "aboutStep2": "Adjust Number of Levels, Edge Simplicity and Edge Fidelity to shape the effect.",
+    "aboutStep3": "Use Reset to Original or Reset All Settings any time to start over.",
+    "aboutStep4": "Pick PNG or JPG and download your result.",
+    "errorNoFile": "No file was selected.",
+    "errorUnsupportedFile": "Unsupported file type. Please upload a PNG, JPG, JPEG, WEBP, HEIC, or HEIF image.",
+    "errorTooLarge": "File is too large. Maximum allowed size is 40MB.",
+    "errorEmptyFile": "The selected file appears to be empty.",
+    "errorHeic": "This looks like a HEIC/HEIF photo (common on iPhone/Mac), even if its name ends in .jpg. Please convert it to JPEG or PNG first — on Mac: open it in Preview → File → Export, choose JPEG/PNG — then re-upload.",
+    "errorInvalidImage": "This file could not be read as a valid image.",
+    "errorProcessing": "Something went wrong while processing that image.",
+    "errorExport": "Could not export the image. Please try again.",
+    "statusLoaded": "Image loaded. Adjust the slider to preview the cutout effect.",
+    "statusResetOriginal": "Image reset to its closest-to-original state.",
+    "statusResetSettings": "All settings reset to their defaults.",
+    "statusDownloadedNewTab": "Download started — if nothing happened, use the image opened in the new tab and save it from there.",
+    "statusDownloadedSaveAs": "Download started. If it didn't work, right-click the image above and choose \"Save Image As…\".",
+    "langLabel": "Language"
+  },
+  "ar": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "ارفع صورة، حوّلها إلى درجات لونية مسطحة وجريئة، وصدّر صورة بأسلوب القص الفني بجودة عالية — كل ذلك في الوقت الفعلي.",
+    "uploadPrimary": "انقر، اسحب وأفلت، أو اضغط Enter لرفع صورة",
+    "uploadPrimaryReplace": "انقر، اسحب وأفلت، أو اضغط Enter لاستبدال هذه الصورة",
+    "uploadHint": "PNG أو JPG أو JPEG أو WEBP أو HEIC أو HEIF · حتى 40 ميغابايت",
+    "levelsLabel": "عدد المستويات",
+    "simplicityLabel": "بساطة الحواف",
+    "fidelityLabel": "دقة الحواف",
+    "resetAllSettings": "إعادة تعيين كل الإعدادات",
+    "resetToOriginal": "إعادة إلى الأصل",
+    "download": "تنزيل PNG",
+    "downloadPng": "تنزيل PNG",
+    "downloadJpg": "تنزيل JPG",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "لم يتم تحميل أي صورة بعد",
+    "menuOpen": "فتح دليل الاستخدام",
+    "menuClose": "إغلاق",
+    "menuTitle": "القائمة",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "دليل الاستخدام",
+    "navGuideSub": "كيف يعمل التطبيق",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "حوّل أي صورة إلى عمل فني جريء بأسلوب الملصقات.",
+    "aboutBody1": "تأخذ هذه الأداة صورة وتختزلها إلى عدد قليل من الدرجات اللونية المسطحة بحواف نظيفة ومبسّطة — المظهر الكلاسيكي المعروف بـ\"القص\" أو التلوين المسطح، الشبيه بالكولاج الورقي أو الطباعة الشاشية.",
+    "aboutBody2": "الخصوصية: كل شيء يحدث داخل متصفحك. صورتك لا تغادر جهازك أبدًا ولا يتم تخزينها على أي خادم.",
+    "aboutHowTitle": "كيفية الاستخدام",
+    "aboutStep1": "ارفع صورة — انقر على منطقة الرفع، أو اسحب وأفلت، أو اضغط Enter.",
+    "aboutStep2": "اضبط عدد المستويات وبساطة الحواف ودقة الحواف لتشكيل التأثير.",
+    "aboutStep3": "استخدم إعادة إلى الأصل أو إعادة تعيين كل الإعدادات في أي وقت للبدء من جديد.",
+    "aboutStep4": "اختر PNG أو JPG ونزّل النتيجة.",
+    "errorNoFile": "لم يتم اختيار أي ملف.",
+    "errorUnsupportedFile": "نوع ملف غير مدعوم. الرجاء رفع صورة بصيغة PNG أو JPG أو JPEG أو WEBP أو HEIC أو HEIF.",
+    "errorTooLarge": "الملف كبير جدًا. الحجم الأقصى المسموح به هو 40 ميغابايت.",
+    "errorEmptyFile": "يبدو أن الملف المحدد فارغ.",
+    "errorHeic": "يبدو أن هذه صورة HEIC/HEIF (شائعة على iPhone/Mac)، حتى لو كان اسمها ينتهي بـ .jpg. الرجاء تحويلها أولاً إلى JPEG أو PNG — على Mac: افتحها في Preview ← File ← Export واختر JPEG/PNG — ثم أعد الرفع.",
+    "errorInvalidImage": "تعذّرت قراءة هذا الملف كصورة صالحة.",
+    "errorProcessing": "حدث خطأ ما أثناء معالجة هذه الصورة.",
+    "errorExport": "تعذّر تصدير الصورة. الرجاء المحاولة مرة أخرى.",
+    "statusLoaded": "تم تحميل الصورة. اضبط شريط التمرير لمعاينة تأثير القص.",
+    "statusResetOriginal": "تمت إعادة الصورة إلى أقرب حالة لأصلها.",
+    "statusResetSettings": "تمت إعادة تعيين كل الإعدادات إلى قيمها الافتراضية.",
+    "statusDownloadedNewTab": "بدأ التنزيل — إذا لم يحدث شيء، استخدم الصورة التي فُتحت في التبويب الجديد واحفظها من هناك.",
+    "statusDownloadedSaveAs": "بدأ التنزيل. إذا لم يعمل، انقر بزر الفأرة الأيمن على الصورة أعلاه واختر \"حفظ الصورة باسم…\".",
+    "langLabel": "اللغة"
+  },
+  "bn": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "একটি ছবি আপলোড করুন, এটিকে বোল্ড, ফ্ল্যাট টোনে পোস্টারাইজ করুন এবং একটি পরিমার্জিত কাটআউট-শৈলীর ছবি রপ্তানি করুন — সবকিছু রিয়েল টাইমে।",
+    "uploadPrimary": "ছবি আপলোড করতে ক্লিক করুন, টেনে ছেড়ে দিন, বা Enter চাপুন",
+    "uploadPrimaryReplace": "এই ছবিটি প্রতিস্থাপন করতে ক্লিক করুন, টেনে ছেড়ে দিন, বা Enter চাপুন",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC বা HEIF · সর্বোচ্চ 40MB",
+    "levelsLabel": "স্তরের সংখ্যা",
+    "simplicityLabel": "প্রান্তের সরলতা",
+    "fidelityLabel": "প্রান্তের নির্ভুলতা",
+    "resetAllSettings": "সব সেটিংস রিসেট করুন",
+    "resetToOriginal": "মূলে রিসেট করুন",
+    "download": "PNG ডাউনলোড করুন",
+    "downloadPng": "PNG ডাউনলোড করুন",
+    "downloadJpg": "JPG ডাউনলোড করুন",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "এখনও কোনো ছবি লোড হয়নি",
+    "menuOpen": "ব্যবহারকারী গাইড খুলুন",
+    "menuClose": "বন্ধ করুন",
+    "menuTitle": "মেনু",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "ব্যবহারকারী গাইড",
+    "navGuideSub": "অ্যাপ কীভাবে কাজ করে",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "যেকোনো ছবিকে বোল্ড, ফ্ল্যাট, পোস্টার-শৈলীর শিল্পে রূপান্তর করুন।",
+    "aboutBody1": "এই টুলটি একটি ছবি নেয় এবং পরিষ্কার, সরলীকৃত প্রান্তসহ অল্প কিছু ফ্ল্যাট রঙের টোনে হ্রাস করে — পেপার কোলাজ বা স্ক্রিন প্রিন্টের মতো ক্লাসিক \"কাটআউট\" বা পোস্টারাইজড লুক।",
+    "aboutBody2": "গোপনীয়তা: সবকিছু আপনার ব্রাউজারে ঘটে। আপনার ছবি কখনও আপনার ডিভাইস ছেড়ে যায় না এবং কোনো সার্ভারে সংরক্ষিত হয় না।",
+    "aboutHowTitle": "কীভাবে ব্যবহার করবেন",
+    "aboutStep1": "একটি ছবি আপলোড করুন — আপলোড এলাকায় ক্লিক করুন, টেনে ছেড়ে দিন, বা Enter চাপুন।",
+    "aboutStep2": "প্রভাব গঠন করতে স্তরের সংখ্যা, প্রান্তের সরলতা এবং প্রান্তের নির্ভুলতা সামঞ্জস্য করুন।",
+    "aboutStep3": "যেকোনো সময় পুনরায় শুরু করতে মূলে রিসেট করুন বা সব সেটিংস রিসেট করুন ব্যবহার করুন।",
+    "aboutStep4": "PNG বা JPG নির্বাচন করুন এবং আপনার ফলাফল ডাউনলোড করুন।",
+    "errorNoFile": "কোনো ফাইল নির্বাচিত হয়নি।",
+    "errorUnsupportedFile": "অসমর্থিত ফাইল প্রকার। অনুগ্রহ করে PNG, JPG, JPEG, WEBP, HEIC, বা HEIF ছবি আপলোড করুন।",
+    "errorTooLarge": "ফাইলটি খুব বড়। সর্বোচ্চ অনুমোদিত আকার 40MB।",
+    "errorEmptyFile": "নির্বাচিত ফাইলটি খালি বলে মনে হচ্ছে।",
+    "errorHeic": "এটি একটি HEIC/HEIF ছবির মতো দেখাচ্ছে (iPhone/Mac-এ সাধারণ), এমনকি যদি এর নাম .jpg দিয়ে শেষ হয়। অনুগ্রহ করে প্রথমে এটি JPEG বা PNG-তে রূপান্তর করুন — Mac-এ: Preview-তে খুলুন → File → Export, JPEG/PNG নির্বাচন করুন — তারপর আবার আপলোড করুন।",
+    "errorInvalidImage": "এই ফাইলটি বৈধ ছবি হিসেবে পড়া যায়নি।",
+    "errorProcessing": "সেই ছবিটি প্রক্রিয়া করার সময় কিছু ভুল হয়েছে।",
+    "errorExport": "ছবিটি রপ্তানি করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।",
+    "statusLoaded": "ছবি লোড হয়েছে। কাটআউট প্রভাব পূর্বরূপ দেখতে স্লাইডার সামঞ্জস্য করুন।",
+    "statusResetOriginal": "ছবিটি তার মূলের সবচেয়ে কাছাকাছি অবস্থায় রিসেট করা হয়েছে।",
+    "statusResetSettings": "সব সেটিংস তাদের ডিফল্টে রিসেট করা হয়েছে।",
+    "statusDownloadedNewTab": "ডাউনলোড শুরু হয়েছে — যদি কিছু না ঘটে, নতুন ট্যাবে খোলা ছবিটি ব্যবহার করুন এবং সেখান থেকে সংরক্ষণ করুন।",
+    "statusDownloadedSaveAs": "ডাউনলোড শুরু হয়েছে। যদি এটি কাজ না করে, উপরের ছবিতে ডান-ক্লিক করুন এবং \"ছবি এভাবে সংরক্ষণ করুন…\" নির্বাচন করুন।",
+    "langLabel": "ভাষা"
+  },
+  "zh": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "上传一张照片，将其海报化为大胆的平面色调，导出精美的剪影风格图像 — 全部实时完成。",
+    "uploadPrimary": "点击、拖放，或按 Enter 上传图片",
+    "uploadPrimaryReplace": "点击、拖放，或按 Enter 替换此图片",
+    "uploadHint": "PNG、JPG、JPEG、WEBP、HEIC 或 HEIF · 最大 40MB",
+    "levelsLabel": "色阶数量",
+    "simplicityLabel": "边缘简化度",
+    "fidelityLabel": "边缘保真度",
+    "resetAllSettings": "重置所有设置",
+    "resetToOriginal": "重置为原图",
+    "download": "下载 PNG",
+    "downloadPng": "下载 PNG",
+    "downloadJpg": "下载 JPG",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "尚未加载图片",
+    "menuOpen": "打开使用指南",
+    "menuClose": "关闭",
+    "menuTitle": "菜单",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "使用指南",
+    "navGuideSub": "应用如何运作",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "将任意照片变成大胆的平面海报风格艺术作品。",
+    "aboutBody1": "此工具将照片简化为少量的平面色调，并配以简洁利落的边缘 — 这是经典的“剪影”或海报化效果，类似于纸拼贴或丝网印刷。",
+    "aboutBody2": "隐私：一切都在您的浏览器中进行。您的照片永远不会离开您的设备，也不会存储在任何服务器上。",
+    "aboutHowTitle": "使用方法",
+    "aboutStep1": "上传照片 — 点击上传区域、拖放文件，或按 Enter。",
+    "aboutStep2": "调整色阶数量、边缘简化度和边缘保真度以塑造效果。",
+    "aboutStep3": "随时使用“重置为原图”或“重置所有设置”重新开始。",
+    "aboutStep4": "选择 PNG 或 JPG 并下载结果。",
+    "errorNoFile": "未选择任何文件。",
+    "errorUnsupportedFile": "不支持的文件类型。请上传 PNG、JPG、JPEG、WEBP、HEIC 或 HEIF 图片。",
+    "errorTooLarge": "文件过大。允许的最大大小为 40MB。",
+    "errorEmptyFile": "所选文件似乎为空。",
+    "errorHeic": "这看起来像是 HEIC/HEIF 照片（常见于 iPhone/Mac），即使文件名以 .jpg 结尾。请先将其转换为 JPEG 或 PNG — 在 Mac 上：在预览中打开 → 文件 → 导出，选择 JPEG/PNG — 然后重新上传。",
+    "errorInvalidImage": "无法将此文件读取为有效图片。",
+    "errorProcessing": "处理该图片时出现问题。",
+    "errorExport": "无法导出图片，请重试。",
+    "statusLoaded": "图片已加载。调整滑块以预览剪影效果。",
+    "statusResetOriginal": "图片已重置为最接近原图的状态。",
+    "statusResetSettings": "所有设置已重置为默认值。",
+    "statusDownloadedNewTab": "下载已开始 — 如果没有反应，请使用在新标签页中打开的图片并从那里保存。",
+    "statusDownloadedSaveAs": "下载已开始。如果没有成功，请右键点击上方图片并选择“图片另存为…”。",
+    "langLabel": "语言"
+  },
+  "de": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "Lade ein Foto hoch, posterisiere es zu kräftigen, flachen Farbtönen und exportiere ein poliertes Cutout-Bild — alles in Echtzeit.",
+    "uploadPrimary": "Klicken, per Drag & Drop ziehen oder Enter drücken, um ein Bild hochzuladen",
+    "uploadPrimaryReplace": "Klicken, per Drag & Drop ziehen oder Enter drücken, um dieses Bild zu ersetzen",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC oder HEIF · bis zu 40MB",
+    "levelsLabel": "Anzahl der Stufen",
+    "simplicityLabel": "Kanten-Einfachheit",
+    "fidelityLabel": "Kanten-Genauigkeit",
+    "resetAllSettings": "Alle Einstellungen zurücksetzen",
+    "resetToOriginal": "Auf Original zurücksetzen",
+    "download": "PNG herunterladen",
+    "downloadPng": "PNG herunterladen",
+    "downloadJpg": "JPG herunterladen",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "Noch kein Bild geladen",
+    "menuOpen": "Benutzerhandbuch öffnen",
+    "menuClose": "Schließen",
+    "menuTitle": "Menü",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "Benutzerhandbuch",
+    "navGuideSub": "So funktioniert die App",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "Verwandle jedes Foto in kräftige, flache Kunst im Poster-Stil.",
+    "aboutBody1": "Dieses Tool reduziert ein Foto auf eine kleine Anzahl flacher Farbtöne mit sauberen, vereinfachten Kanten — der klassische „Cutout“- bzw. posterisierte Look, ähnlich einer Papiercollage oder einem Siebdruck.",
+    "aboutBody2": "Datenschutz: Alles geschieht in deinem Browser. Dein Foto verlässt niemals dein Gerät und wird nie auf einem Server gespeichert.",
+    "aboutHowTitle": "So wird's benutzt",
+    "aboutStep1": "Foto hochladen — klicke auf den Upload-Bereich, ziehe per Drag & Drop oder drücke Enter.",
+    "aboutStep2": "Passe Anzahl der Stufen, Kanten-Einfachheit und Kanten-Genauigkeit an, um den Effekt zu gestalten.",
+    "aboutStep3": "Nutze jederzeit „Auf Original zurücksetzen“ oder „Alle Einstellungen zurücksetzen“, um neu zu beginnen.",
+    "aboutStep4": "Wähle PNG oder JPG und lade dein Ergebnis herunter.",
+    "errorNoFile": "Es wurde keine Datei ausgewählt.",
+    "errorUnsupportedFile": "Nicht unterstützter Dateityp. Bitte lade ein PNG-, JPG-, JPEG-, WEBP-, HEIC- oder HEIF-Bild hoch.",
+    "errorTooLarge": "Die Datei ist zu groß. Die maximal zulässige Größe beträgt 40MB.",
+    "errorEmptyFile": "Die ausgewählte Datei scheint leer zu sein.",
+    "errorHeic": "Dies sieht wie ein HEIC/HEIF-Foto aus (üblich bei iPhone/Mac), selbst wenn der Name auf .jpg endet. Bitte zuerst in JPEG oder PNG umwandeln — auf dem Mac: in Vorschau öffnen → Ablage → Exportieren, JPEG/PNG wählen — dann erneut hochladen.",
+    "errorInvalidImage": "Diese Datei konnte nicht als gültiges Bild gelesen werden.",
+    "errorProcessing": "Beim Verarbeiten dieses Bildes ist etwas schiefgelaufen.",
+    "errorExport": "Das Bild konnte nicht exportiert werden. Bitte versuche es erneut.",
+    "statusLoaded": "Bild geladen. Bewege den Regler, um den Cutout-Effekt in der Vorschau zu sehen.",
+    "statusResetOriginal": "Bild auf den originalnächsten Zustand zurückgesetzt.",
+    "statusResetSettings": "Alle Einstellungen auf ihre Standardwerte zurückgesetzt.",
+    "statusDownloadedNewTab": "Download gestartet — falls nichts passiert ist, nutze das im neuen Tab geöffnete Bild und speichere es von dort.",
+    "statusDownloadedSaveAs": "Download gestartet. Falls es nicht funktioniert hat, klicke mit der rechten Maustaste auf das Bild oben und wähle „Bild speichern unter…“.",
+    "langLabel": "Sprache"
+  },
+  "es": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "Sube una foto, posterízala en tonos planos y audaces, y exporta una imagen estilo cutout pulida — todo en tiempo real.",
+    "uploadPrimary": "Haz clic, arrastra y suelta, o pulsa Enter para subir una imagen",
+    "uploadPrimaryReplace": "Haz clic, arrastra y suelta, o pulsa Enter para reemplazar esta imagen",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC o HEIF · hasta 40MB",
+    "levelsLabel": "Número de niveles",
+    "simplicityLabel": "Simplicidad de borde",
+    "fidelityLabel": "Fidelidad de borde",
+    "resetAllSettings": "Restablecer todos los ajustes",
+    "resetToOriginal": "Restablecer al original",
+    "download": "Descargar PNG",
+    "downloadPng": "Descargar PNG",
+    "downloadJpg": "Descargar JPG",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "Aún no se ha cargado ninguna imagen",
+    "menuOpen": "Abrir guía de usuario",
+    "menuClose": "Cerrar",
+    "menuTitle": "Menú",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "Guía de usuario",
+    "navGuideSub": "Cómo funciona la app",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "Convierte cualquier foto en arte audaz y plano estilo póster.",
+    "aboutBody1": "Esta herramienta toma una foto y la reduce a un pequeño número de tonos de color planos con bordes limpios y simplificados — el clásico look \"cutout\" o posterizado, similar a un collage de papel o una serigrafía.",
+    "aboutBody2": "Privacidad: todo ocurre en tu navegador. Tu foto nunca sale de tu dispositivo ni se almacena en ningún servidor.",
+    "aboutHowTitle": "Cómo usarlo",
+    "aboutStep1": "Sube una foto — haz clic en el área de carga, arrastra y suelta, o pulsa Enter.",
+    "aboutStep2": "Ajusta el Número de niveles, la Simplicidad de borde y la Fidelidad de borde para dar forma al efecto.",
+    "aboutStep3": "Usa Restablecer al original o Restablecer todos los ajustes en cualquier momento para empezar de nuevo.",
+    "aboutStep4": "Elige PNG o JPG y descarga tu resultado.",
+    "errorNoFile": "No se seleccionó ningún archivo.",
+    "errorUnsupportedFile": "Tipo de archivo no compatible. Sube una imagen PNG, JPG, JPEG, WEBP, HEIC o HEIF.",
+    "errorTooLarge": "El archivo es demasiado grande. El tamaño máximo permitido es 40MB.",
+    "errorEmptyFile": "El archivo seleccionado parece estar vacío.",
+    "errorHeic": "Esto parece una foto HEIC/HEIF (común en iPhone/Mac), aunque su nombre termine en .jpg. Conviértela primero a JPEG o PNG — en Mac: ábrela en Vista previa → Archivo → Exportar, elige JPEG/PNG — y vuelve a subirla.",
+    "errorInvalidImage": "Este archivo no pudo leerse como una imagen válida.",
+    "errorProcessing": "Algo salió mal al procesar esa imagen.",
+    "errorExport": "No se pudo exportar la imagen. Inténtalo de nuevo.",
+    "statusLoaded": "Imagen cargada. Ajusta el control deslizante para previsualizar el efecto cutout.",
+    "statusResetOriginal": "Imagen restablecida a su estado más cercano al original.",
+    "statusResetSettings": "Todos los ajustes se restablecieron a sus valores predeterminados.",
+    "statusDownloadedNewTab": "Descarga iniciada — si no ocurrió nada, usa la imagen abierta en la nueva pestaña y guárdala desde allí.",
+    "statusDownloadedSaveAs": "Descarga iniciada. Si no funcionó, haz clic derecho en la imagen de arriba y elige \"Guardar imagen como…\".",
+    "langLabel": "Idioma"
+  },
+  "fr": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "Téléchargez une photo, postérisez-la en tons plats et audacieux, puis exportez une image façon cutout soignée — le tout en temps réel.",
+    "uploadPrimary": "Cliquez, glissez-déposez, ou appuyez sur Entrée pour téléverser une image",
+    "uploadPrimaryReplace": "Cliquez, glissez-déposez, ou appuyez sur Entrée pour remplacer cette image",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC ou HEIF · jusqu'à 40 Mo",
+    "levelsLabel": "Nombre de niveaux",
+    "simplicityLabel": "Simplicité des contours",
+    "fidelityLabel": "Fidélité des contours",
+    "resetAllSettings": "Réinitialiser tous les réglages",
+    "resetToOriginal": "Réinitialiser à l'original",
+    "download": "Télécharger le PNG",
+    "downloadPng": "Télécharger le PNG",
+    "downloadJpg": "Télécharger le JPG",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "Aucune image chargée pour le moment",
+    "menuOpen": "Ouvrir le guide d'utilisation",
+    "menuClose": "Fermer",
+    "menuTitle": "Menu",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "Guide d'utilisation",
+    "navGuideSub": "Comment fonctionne l'application",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "Transformez n'importe quelle photo en art audacieux façon affiche.",
+    "aboutBody1": "Cet outil prend une photo et la réduit à un petit nombre de tons de couleur plats aux contours nets et simplifiés — le look classique « cutout » ou postérisé, semblable à un collage papier ou une sérigraphie.",
+    "aboutBody2": "Confidentialité : tout se passe dans votre navigateur. Votre photo ne quitte jamais votre appareil et n'est jamais stockée sur un serveur.",
+    "aboutHowTitle": "Comment l'utiliser",
+    "aboutStep1": "Téléchargez une photo — cliquez sur la zone de dépôt, glissez-déposez, ou appuyez sur Entrée.",
+    "aboutStep2": "Ajustez le Nombre de niveaux, la Simplicité des contours et la Fidélité des contours pour façonner l'effet.",
+    "aboutStep3": "Utilisez Réinitialiser à l'original ou Réinitialiser tous les réglages à tout moment pour recommencer.",
+    "aboutStep4": "Choisissez PNG ou JPG et téléchargez votre résultat.",
+    "errorNoFile": "Aucun fichier n'a été sélectionné.",
+    "errorUnsupportedFile": "Type de fichier non pris en charge. Veuillez téléverser une image PNG, JPG, JPEG, WEBP, HEIC ou HEIF.",
+    "errorTooLarge": "Le fichier est trop volumineux. La taille maximale autorisée est de 40 Mo.",
+    "errorEmptyFile": "Le fichier sélectionné semble être vide.",
+    "errorHeic": "Ceci ressemble à une photo HEIC/HEIF (courante sur iPhone/Mac), même si son nom se termine par .jpg. Veuillez d'abord la convertir en JPEG ou PNG — sur Mac : ouvrez-la dans Aperçu → Fichier → Exporter, choisissez JPEG/PNG — puis re-téléversez-la.",
+    "errorInvalidImage": "Ce fichier n'a pas pu être lu comme une image valide.",
+    "errorProcessing": "Une erreur s'est produite lors du traitement de cette image.",
+    "errorExport": "Impossible d'exporter l'image. Veuillez réessayer.",
+    "statusLoaded": "Image chargée. Ajustez le curseur pour prévisualiser l'effet cutout.",
+    "statusResetOriginal": "Image réinitialisée à son état le plus proche de l'original.",
+    "statusResetSettings": "Tous les réglages ont été réinitialisés à leurs valeurs par défaut.",
+    "statusDownloadedNewTab": "Téléchargement lancé — si rien ne s'est passé, utilisez l'image ouverte dans le nouvel onglet et enregistrez-la depuis là.",
+    "statusDownloadedSaveAs": "Téléchargement lancé. Si cela n'a pas fonctionné, clic droit sur l'image ci-dessus puis « Enregistrer l'image sous… ».",
+    "langLabel": "Langue"
+  },
+  "hi": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "एक फ़ोटो अपलोड करें, उसे बोल्ड, फ्लैट टोन में पोस्टराइज़ करें, और एक शानदार कटआउट-शैली की छवि निर्यात करें — यह सब वास्तविक समय में।",
+    "uploadPrimary": "छवि अपलोड करने के लिए क्लिक करें, खींचें और छोड़ें, या Enter दबाएँ",
+    "uploadPrimaryReplace": "इस छवि को बदलने के लिए क्लिक करें, खींचें और छोड़ें, या Enter दबाएँ",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC या HEIF · 40MB तक",
+    "levelsLabel": "स्तरों की संख्या",
+    "simplicityLabel": "किनारा सरलता",
+    "fidelityLabel": "किनारा सटीकता",
+    "resetAllSettings": "सभी सेटिंग्स रीसेट करें",
+    "resetToOriginal": "मूल पर रीसेट करें",
+    "download": "PNG डाउनलोड करें",
+    "downloadPng": "PNG डाउनलोड करें",
+    "downloadJpg": "JPG डाउनलोड करें",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "अभी तक कोई छवि लोड नहीं हुई",
+    "menuOpen": "उपयोगकर्ता गाइड खोलें",
+    "menuClose": "बंद करें",
+    "menuTitle": "मेन्यू",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "उपयोगकर्ता गाइड",
+    "navGuideSub": "ऐप कैसे काम करता है",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "किसी भी फ़ोटो को बोल्ड, फ्लैट, पोस्टर-शैली की कला में बदलें।",
+    "aboutBody1": "यह टूल एक फ़ोटो लेता है और उसे साफ़, सरल किनारों के साथ थोड़े से फ्लैट रंग टोन में घटा देता है — क्लासिक \"कटआउट\" या पोस्टराइज़्ड लुक, जो पेपर कोलाज या स्क्रीन प्रिंट जैसा दिखता है।",
+    "aboutBody2": "गोपनीयता: सब कुछ आपके ब्राउज़र में होता है। आपकी फ़ोटो आपके डिवाइस से कभी बाहर नहीं जाती और किसी सर्वर पर संग्रहीत नहीं होती।",
+    "aboutHowTitle": "इसका उपयोग कैसे करें",
+    "aboutStep1": "एक फ़ोटो अपलोड करें — अपलोड क्षेत्र पर क्लिक करें, खींचें और छोड़ें, या Enter दबाएँ।",
+    "aboutStep2": "प्रभाव को आकार देने के लिए स्तरों की संख्या, किनारा सरलता और किनारा सटीकता समायोजित करें।",
+    "aboutStep3": "फिर से शुरू करने के लिए कभी भी मूल पर रीसेट करें या सभी सेटिंग्स रीसेट करें का उपयोग करें।",
+    "aboutStep4": "PNG या JPG चुनें और अपना परिणाम डाउनलोड करें।",
+    "errorNoFile": "कोई फ़ाइल नहीं चुनी गई।",
+    "errorUnsupportedFile": "असमर्थित फ़ाइल प्रकार। कृपया PNG, JPG, JPEG, WEBP, HEIC, या HEIF छवि अपलोड करें।",
+    "errorTooLarge": "फ़ाइल बहुत बड़ी है। अधिकतम अनुमत आकार 40MB है।",
+    "errorEmptyFile": "चयनित फ़ाइल खाली प्रतीत होती है।",
+    "errorHeic": "यह HEIC/HEIF फ़ोटो जैसी दिखती है (iPhone/Mac पर आम है), भले ही इसका नाम .jpg पर समाप्त हो। कृपया पहले इसे JPEG या PNG में बदलें — Mac पर: इसे Preview में खोलें → File → Export, JPEG/PNG चुनें — फिर दोबारा अपलोड करें।",
+    "errorInvalidImage": "इस फ़ाइल को मान्य छवि के रूप में नहीं पढ़ा जा सका।",
+    "errorProcessing": "उस छवि को संसाधित करते समय कुछ गलत हो गया।",
+    "errorExport": "छवि निर्यात नहीं की जा सकी। कृपया पुनः प्रयास करें।",
+    "statusLoaded": "छवि लोड हो गई। कटआउट प्रभाव पूर्वावलोकन के लिए स्लाइडर समायोजित करें।",
+    "statusResetOriginal": "छवि अपनी मूल स्थिति के सबसे निकट रीसेट कर दी गई।",
+    "statusResetSettings": "सभी सेटिंग्स उनके डिफ़ॉल्ट पर रीसेट कर दी गईं।",
+    "statusDownloadedNewTab": "डाउनलोड शुरू हुआ — यदि कुछ नहीं हुआ, तो नए टैब में खुली छवि का उपयोग करें और वहाँ से सहेजें।",
+    "statusDownloadedSaveAs": "डाउनलोड शुरू हुआ। यदि यह काम नहीं करता है, तो ऊपर की छवि पर राइट-क्लिक करें और \"छवि को इस रूप में सहेजें…\" चुनें।",
+    "langLabel": "भाषा"
+  },
+  "id": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "Unggah foto, posterisasi menjadi warna datar yang berani, dan ekspor gambar bergaya cutout yang halus — semuanya secara real-time.",
+    "uploadPrimary": "Klik, seret & lepas, atau tekan Enter untuk mengunggah gambar",
+    "uploadPrimaryReplace": "Klik, seret & lepas, atau tekan Enter untuk mengganti gambar ini",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC, atau HEIF · hingga 40MB",
+    "levelsLabel": "Jumlah Level",
+    "simplicityLabel": "Kesederhanaan Tepi",
+    "fidelityLabel": "Kesetiaan Tepi",
+    "resetAllSettings": "Atur Ulang Semua Pengaturan",
+    "resetToOriginal": "Atur Ulang ke Asli",
+    "download": "Unduh PNG",
+    "downloadPng": "Unduh PNG",
+    "downloadJpg": "Unduh JPG",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "Belum ada gambar yang dimuat",
+    "menuOpen": "Buka panduan pengguna",
+    "menuClose": "Tutup",
+    "menuTitle": "Menu",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "Panduan Pengguna",
+    "navGuideSub": "Cara kerja aplikasi",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "Ubah foto apa pun menjadi karya seni bergaya poster yang berani dan datar.",
+    "aboutBody1": "Alat ini mengambil foto dan menyederhanakannya menjadi sejumlah kecil warna datar dengan tepi yang bersih dan sederhana — tampilan klasik \"cutout\" atau posterisasi, mirip kolase kertas atau cetak sablon.",
+    "aboutBody2": "Privasi: Semuanya terjadi di browser Anda. Foto Anda tidak pernah meninggalkan perangkat dan tidak pernah disimpan di server.",
+    "aboutHowTitle": "Cara menggunakannya",
+    "aboutStep1": "Unggah foto — klik area unggah, seret & lepas, atau tekan Enter.",
+    "aboutStep2": "Sesuaikan Jumlah Level, Kesederhanaan Tepi, dan Kesetiaan Tepi untuk membentuk efek.",
+    "aboutStep3": "Gunakan Atur Ulang ke Asli atau Atur Ulang Semua Pengaturan kapan saja untuk memulai kembali.",
+    "aboutStep4": "Pilih PNG atau JPG dan unduh hasilnya.",
+    "errorNoFile": "Tidak ada file yang dipilih.",
+    "errorUnsupportedFile": "Jenis file tidak didukung. Silakan unggah gambar PNG, JPG, JPEG, WEBP, HEIC, atau HEIF.",
+    "errorTooLarge": "File terlalu besar. Ukuran maksimum yang diizinkan adalah 40MB.",
+    "errorEmptyFile": "File yang dipilih tampaknya kosong.",
+    "errorHeic": "Ini tampak seperti foto HEIC/HEIF (umum di iPhone/Mac), meskipun namanya berakhiran .jpg. Silakan konversi ke JPEG atau PNG terlebih dahulu — di Mac: buka di Preview → File → Export, pilih JPEG/PNG — lalu unggah ulang.",
+    "errorInvalidImage": "File ini tidak dapat dibaca sebagai gambar yang valid.",
+    "errorProcessing": "Terjadi kesalahan saat memproses gambar tersebut.",
+    "errorExport": "Tidak dapat mengekspor gambar. Silakan coba lagi.",
+    "statusLoaded": "Gambar dimuat. Sesuaikan penggeser untuk melihat pratinjau efek cutout.",
+    "statusResetOriginal": "Gambar diatur ulang ke kondisi paling mendekati aslinya.",
+    "statusResetSettings": "Semua pengaturan diatur ulang ke default.",
+    "statusDownloadedNewTab": "Unduhan dimulai — jika tidak ada yang terjadi, gunakan gambar yang terbuka di tab baru dan simpan dari sana.",
+    "statusDownloadedSaveAs": "Unduhan dimulai. Jika tidak berhasil, klik kanan pada gambar di atas dan pilih \"Simpan Gambar Sebagai…\".",
+    "langLabel": "Bahasa"
+  },
+  "it": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "Carica una foto, posterizzala in toni piatti e decisi, ed esporta un'immagine in stile cutout rifinita — tutto in tempo reale.",
+    "uploadPrimary": "Clicca, trascina e rilascia, oppure premi Invio per caricare un'immagine",
+    "uploadPrimaryReplace": "Clicca, trascina e rilascia, oppure premi Invio per sostituire questa immagine",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC o HEIF · fino a 40MB",
+    "levelsLabel": "Numero di livelli",
+    "simplicityLabel": "Semplicità dei bordi",
+    "fidelityLabel": "Fedeltà dei bordi",
+    "resetAllSettings": "Reimposta tutte le impostazioni",
+    "resetToOriginal": "Ripristina originale",
+    "download": "Scarica PNG",
+    "downloadPng": "Scarica PNG",
+    "downloadJpg": "Scarica JPG",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "Nessuna immagine ancora caricata",
+    "menuOpen": "Apri la guida utente",
+    "menuClose": "Chiudi",
+    "menuTitle": "Menu",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "Guida utente",
+    "navGuideSub": "Come funziona l'app",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "Trasforma qualsiasi foto in un'opera d'arte decisa in stile poster.",
+    "aboutBody1": "Questo strumento prende una foto e la riduce a un piccolo numero di toni di colore piatti con bordi puliti e semplificati — il classico look \"cutout\" o posterizzato, simile a un collage di carta o una serigrafia.",
+    "aboutBody2": "Privacy: tutto avviene nel tuo browser. La tua foto non lascia mai il tuo dispositivo e non viene mai salvata su un server.",
+    "aboutHowTitle": "Come si usa",
+    "aboutStep1": "Carica una foto — clicca sull'area di caricamento, trascina e rilascia, oppure premi Invio.",
+    "aboutStep2": "Regola Numero di livelli, Semplicità dei bordi e Fedeltà dei bordi per modellare l'effetto.",
+    "aboutStep3": "Usa Ripristina originale o Reimposta tutte le impostazioni in qualsiasi momento per ricominciare.",
+    "aboutStep4": "Scegli PNG o JPG e scarica il risultato.",
+    "errorNoFile": "Nessun file selezionato.",
+    "errorUnsupportedFile": "Tipo di file non supportato. Carica un'immagine PNG, JPG, JPEG, WEBP, HEIC o HEIF.",
+    "errorTooLarge": "Il file è troppo grande. La dimensione massima consentita è 40MB.",
+    "errorEmptyFile": "Il file selezionato sembra essere vuoto.",
+    "errorHeic": "Questa sembra una foto HEIC/HEIF (comune su iPhone/Mac), anche se il nome termina in .jpg. Convertila prima in JPEG o PNG — su Mac: aprila in Anteprima → File → Esporta, scegli JPEG/PNG — poi ricaricala.",
+    "errorInvalidImage": "Questo file non può essere letto come immagine valida.",
+    "errorProcessing": "Si è verificato un problema durante l'elaborazione di questa immagine.",
+    "errorExport": "Impossibile esportare l'immagine. Riprova.",
+    "statusLoaded": "Immagine caricata. Regola il cursore per visualizzare in anteprima l'effetto cutout.",
+    "statusResetOriginal": "Immagine ripristinata allo stato più vicino all'originale.",
+    "statusResetSettings": "Tutte le impostazioni sono state ripristinate ai valori predefiniti.",
+    "statusDownloadedNewTab": "Download avviato — se non è successo nulla, usa l'immagine aperta nella nuova scheda e salvala da lì.",
+    "statusDownloadedSaveAs": "Download avviato. Se non ha funzionato, fai clic destro sull'immagine sopra e scegli \"Salva immagine con nome…\".",
+    "langLabel": "Lingua"
+  },
+  "ja": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "写真をアップロードして大胆でフラットなトーンにポスタリゼーションし、洗練されたカットアウト風画像として書き出します — すべてリアルタイムで。",
+    "uploadPrimary": "クリック、ドラッグ＆ドロップ、または Enter キーで画像をアップロード",
+    "uploadPrimaryReplace": "クリック、ドラッグ＆ドロップ、または Enter キーでこの画像を置き換え",
+    "uploadHint": "PNG、JPG、JPEG、WEBP、HEIC、HEIF · 最大40MB",
+    "levelsLabel": "レベル数",
+    "simplicityLabel": "エッジの簡略化",
+    "fidelityLabel": "エッジの忠実度",
+    "resetAllSettings": "すべての設定をリセット",
+    "resetToOriginal": "元の画像に戻す",
+    "download": "PNGをダウンロード",
+    "downloadPng": "PNGをダウンロード",
+    "downloadJpg": "JPGをダウンロード",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "まだ画像が読み込まれていません",
+    "menuOpen": "ユーザーガイドを開く",
+    "menuClose": "閉じる",
+    "menuTitle": "メニュー",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "ユーザーガイド",
+    "navGuideSub": "アプリの使い方",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "どんな写真も大胆でフラットなポスター風アートに変換します。",
+    "aboutBody1": "このツールは写真を少数のフラットなカラートーンに落とし込み、すっきりと簡略化されたエッジに仕上げます — 紙のコラージュやスクリーン印刷に似た、クラシックな「カットアウト」またはポスタリゼーション風の見た目です。",
+    "aboutBody2": "プライバシー：すべての処理はブラウザ内で行われます。写真がデバイスから外部に送信されたり、サーバーに保存されたりすることはありません。",
+    "aboutHowTitle": "使い方",
+    "aboutStep1": "写真をアップロード — アップロード領域をクリック、ドラッグ＆ドロップ、または Enter キーを押します。",
+    "aboutStep2": "レベル数、エッジの簡略化、エッジの忠実度を調整して効果を形作ります。",
+    "aboutStep3": "「元の画像に戻す」または「すべての設定をリセット」でいつでもやり直せます。",
+    "aboutStep4": "PNG または JPG を選択して結果をダウンロードします。",
+    "errorNoFile": "ファイルが選択されていません。",
+    "errorUnsupportedFile": "サポートされていないファイル形式です。PNG、JPG、JPEG、WEBP、HEIC、HEIF形式の画像をアップロードしてください。",
+    "errorTooLarge": "ファイルが大きすぎます。許可されている最大サイズは40MBです。",
+    "errorEmptyFile": "選択されたファイルは空のようです。",
+    "errorHeic": "これはHEIC/HEIF形式の写真のようです（iPhone/Macでよく見られます）。ファイル名が.jpgで終わっていても該当する場合があります。まずJPEGまたはPNGに変換してください — Macの場合：プレビューで開く → ファイル → 書き出す、でJPEG/PNGを選択 — その後再度アップロードしてください。",
+    "errorInvalidImage": "このファイルは有効な画像として読み込めませんでした。",
+    "errorProcessing": "この画像の処理中に問題が発生しました。",
+    "errorExport": "画像を書き出せませんでした。もう一度お試しください。",
+    "statusLoaded": "画像を読み込みました。スライダーを調整してカットアウト効果をプレビューしてください。",
+    "statusResetOriginal": "画像は元の状態に最も近い状態にリセットされました。",
+    "statusResetSettings": "すべての設定が初期値にリセットされました。",
+    "statusDownloadedNewTab": "ダウンロードを開始しました — 何も起こらない場合は、新しいタブで開かれた画像からそこで保存してください。",
+    "statusDownloadedSaveAs": "ダウンロードを開始しました。うまくいかない場合は、上の画像を右クリックして「名前を付けて画像を保存…」を選択してください。",
+    "langLabel": "言語"
+  },
+  "ko": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "사진을 업로드하고 대담하고 평평한 톤으로 포스터화하여 세련된 컷아웃 스타일 이미지를 실시간으로 내보내세요.",
+    "uploadPrimary": "클릭, 드래그 앤 드롭, 또는 Enter를 눌러 이미지 업로드",
+    "uploadPrimaryReplace": "클릭, 드래그 앤 드롭, 또는 Enter를 눌러 이 이미지 교체",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC 또는 HEIF · 최대 40MB",
+    "levelsLabel": "레벨 수",
+    "simplicityLabel": "가장자리 단순화",
+    "fidelityLabel": "가장자리 충실도",
+    "resetAllSettings": "모든 설정 재설정",
+    "resetToOriginal": "원본으로 재설정",
+    "download": "PNG 다운로드",
+    "downloadPng": "PNG 다운로드",
+    "downloadJpg": "JPG 다운로드",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "아직 로드된 이미지가 없습니다",
+    "menuOpen": "사용 설명서 열기",
+    "menuClose": "닫기",
+    "menuTitle": "메뉴",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "사용 설명서",
+    "navGuideSub": "앱 작동 방식",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "어떤 사진이든 대담하고 평평한 포스터 스타일 아트로 바꿔보세요.",
+    "aboutBody1": "이 도구는 사진을 소수의 평평한 색조와 깔끔하고 단순화된 가장자리로 줄입니다 — 종이 콜라주나 스크린 인쇄와 비슷한, 고전적인 \"컷아웃\" 또는 포스터화된 스타일입니다.",
+    "aboutBody2": "개인정보 보호: 모든 처리는 브라우저에서 이루어집니다. 사진은 기기를 벗어나지 않으며 서버에 저장되지 않습니다.",
+    "aboutHowTitle": "사용 방법",
+    "aboutStep1": "사진 업로드 — 업로드 영역을 클릭하거나 드래그 앤 드롭하거나 Enter를 누르세요.",
+    "aboutStep2": "레벨 수, 가장자리 단순화, 가장자리 충실도를 조정하여 효과를 만드세요.",
+    "aboutStep3": "언제든지 원본으로 재설정 또는 모든 설정 재설정을 사용해 다시 시작하세요.",
+    "aboutStep4": "PNG 또는 JPG를 선택하고 결과물을 다운로드하세요.",
+    "errorNoFile": "선택된 파일이 없습니다.",
+    "errorUnsupportedFile": "지원되지 않는 파일 형식입니다. PNG, JPG, JPEG, WEBP, HEIC 또는 HEIF 이미지를 업로드해 주세요.",
+    "errorTooLarge": "파일이 너무 큽니다. 허용되는 최대 크기는 40MB입니다.",
+    "errorEmptyFile": "선택한 파일이 비어 있는 것 같습니다.",
+    "errorHeic": "파일 이름이 .jpg로 끝나더라도 HEIC/HEIF 사진(아이폰/맥에서 흔함)으로 보입니다. 먼저 JPEG 또는 PNG로 변환해 주세요 — Mac에서는 미리보기로 열기 → 파일 → 내보내기에서 JPEG/PNG 선택 — 후 다시 업로드하세요.",
+    "errorInvalidImage": "이 파일을 유효한 이미지로 읽을 수 없습니다.",
+    "errorProcessing": "이 이미지를 처리하는 동안 문제가 발생했습니다.",
+    "errorExport": "이미지를 내보낼 수 없습니다. 다시 시도해 주세요.",
+    "statusLoaded": "이미지가 로드되었습니다. 슬라이더를 조정하여 컷아웃 효과를 미리 보세요.",
+    "statusResetOriginal": "이미지가 원본에 가장 가까운 상태로 재설정되었습니다.",
+    "statusResetSettings": "모든 설정이 기본값으로 재설정되었습니다.",
+    "statusDownloadedNewTab": "다운로드가 시작되었습니다 — 아무 일도 일어나지 않으면 새 탭에서 열린 이미지를 사용해 그곳에서 저장하세요.",
+    "statusDownloadedSaveAs": "다운로드가 시작되었습니다. 작동하지 않으면 위 이미지를 마우스 오른쪽 버튼으로 클릭하고 \"이미지를 다른 이름으로 저장…\"을 선택하세요.",
+    "langLabel": "언어"
+  },
+  "mr": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "एक फोटो अपलोड करा, त्याला ठळक, सपाट टोनमध्ये पोस्टराइझ करा, आणि एक सुबक कटआउट-शैलीतील प्रतिमा निर्यात करा — हे सर्व वास्तविक वेळेत.",
+    "uploadPrimary": "प्रतिमा अपलोड करण्यासाठी क्लिक करा, ड्रॅग आणि ड्रॉप करा, किंवा Enter दाबा",
+    "uploadPrimaryReplace": "ही प्रतिमा बदलण्यासाठी क्लिक करा, ड्रॅग आणि ड्रॉप करा, किंवा Enter दाबा",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC किंवा HEIF · 40MB पर्यंत",
+    "levelsLabel": "स्तरांची संख्या",
+    "simplicityLabel": "कडांची साधेपणा",
+    "fidelityLabel": "कडांची अचूकता",
+    "resetAllSettings": "सर्व सेटिंग्ज रीसेट करा",
+    "resetToOriginal": "मूळवर रीसेट करा",
+    "download": "PNG डाउनलोड करा",
+    "downloadPng": "PNG डाउनलोड करा",
+    "downloadJpg": "JPG डाउनलोड करा",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "अद्याप कोणतीही प्रतिमा लोड झाली नाही",
+    "menuOpen": "वापरकर्ता मार्गदर्शक उघडा",
+    "menuClose": "बंद करा",
+    "menuTitle": "मेनू",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "वापरकर्ता मार्गदर्शक",
+    "navGuideSub": "अ‍ॅप कसे कार्य करते",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "कोणत्याही फोटोला ठळक, सपाट, पोस्टर-शैलीतील कलाकृतीत रूपांतरित करा.",
+    "aboutBody1": "हे साधन फोटो घेते आणि त्याला स्वच्छ, सुलभ कडांसह काही सपाट रंगछटांमध्ये कमी करते — पेपर कोलाज किंवा स्क्रीन प्रिंटसारखा क्लासिक \"कटआउट\" किंवा पोस्टराइज्ड लुक.",
+    "aboutBody2": "गोपनीयता: सर्व काही तुमच्या ब्राउझरमध्ये घडते. तुमचा फोटो कधीही तुमच्या डिव्हाइसमधून बाहेर जात नाही आणि कोणत्याही सर्व्हरवर साठवला जात नाही.",
+    "aboutHowTitle": "कसे वापरावे",
+    "aboutStep1": "एक फोटो अपलोड करा — अपलोड क्षेत्रावर क्लिक करा, ड्रॅग आणि ड्रॉप करा, किंवा Enter दाबा.",
+    "aboutStep2": "परिणाम आकार देण्यासाठी स्तरांची संख्या, कडांची साधेपणा आणि कडांची अचूकता समायोजित करा.",
+    "aboutStep3": "पुन्हा सुरुवात करण्यासाठी कधीही मूळवर रीसेट करा किंवा सर्व सेटिंग्ज रीसेट करा वापरा.",
+    "aboutStep4": "PNG किंवा JPG निवडा आणि तुमचा निकाल डाउनलोड करा.",
+    "errorNoFile": "कोणतीही फाइल निवडली गेली नाही.",
+    "errorUnsupportedFile": "असमर्थित फाइल प्रकार. कृपया PNG, JPG, JPEG, WEBP, HEIC, किंवा HEIF प्रतिमा अपलोड करा.",
+    "errorTooLarge": "फाइल खूप मोठी आहे. जास्तीत जास्त परवानगी असलेला आकार 40MB आहे.",
+    "errorEmptyFile": "निवडलेली फाइल रिकामी दिसते.",
+    "errorHeic": "हे HEIC/HEIF फोटोसारखे दिसते (iPhone/Mac वर सामान्य), जरी त्याचे नाव .jpg ने संपत असले तरी. कृपया प्रथम ते JPEG किंवा PNG मध्ये रूपांतरित करा — Mac वर: Preview मध्ये उघडा → File → Export, JPEG/PNG निवडा — नंतर पुन्हा अपलोड करा.",
+    "errorInvalidImage": "ही फाइल वैध प्रतिमा म्हणून वाचता आली नाही.",
+    "errorProcessing": "ती प्रतिमा प्रक्रिया करताना काहीतरी चूक झाली.",
+    "errorExport": "प्रतिमा निर्यात करता आली नाही. कृपया पुन्हा प्रयत्न करा.",
+    "statusLoaded": "प्रतिमा लोड झाली. कटआउट प्रभाव पूर्वावलोकन करण्यासाठी स्लायडर समायोजित करा.",
+    "statusResetOriginal": "प्रतिमा तिच्या मूळ स्थितीच्या सर्वात जवळ रीसेट केली गेली.",
+    "statusResetSettings": "सर्व सेटिंग्ज त्यांच्या डीफॉल्टवर रीसेट केल्या गेल्या.",
+    "statusDownloadedNewTab": "डाउनलोड सुरू झाले — काहीही न झाल्यास, नवीन टॅबमध्ये उघडलेली प्रतिमा वापरा आणि तिथून जतन करा.",
+    "statusDownloadedSaveAs": "डाउनलोड सुरू झाले. जर ते कार्य केले नाही, तर वरील प्रतिमेवर उजवे-क्लिक करा आणि \"प्रतिमा अशी जतन करा…\" निवडा.",
+    "langLabel": "भाषा"
+  },
+  "pt": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "Envie uma foto, posterize-a em tons planos e marcantes, e exporte uma imagem estilo cutout refinada — tudo em tempo real.",
+    "uploadPrimary": "Clique, arraste e solte, ou pressione Enter para enviar uma imagem",
+    "uploadPrimaryReplace": "Clique, arraste e solte, ou pressione Enter para substituir esta imagem",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC ou HEIF · até 40MB",
+    "levelsLabel": "Número de níveis",
+    "simplicityLabel": "Simplicidade da borda",
+    "fidelityLabel": "Fidelidade da borda",
+    "resetAllSettings": "Redefinir todas as configurações",
+    "resetToOriginal": "Redefinir para o original",
+    "download": "Baixar PNG",
+    "downloadPng": "Baixar PNG",
+    "downloadJpg": "Baixar JPG",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "Nenhuma imagem carregada ainda",
+    "menuOpen": "Abrir guia do usuário",
+    "menuClose": "Fechar",
+    "menuTitle": "Menu",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "Guia do usuário",
+    "navGuideSub": "Como o aplicativo funciona",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "Transforme qualquer foto em uma arte marcante estilo pôster.",
+    "aboutBody1": "Esta ferramenta pega uma foto e a reduz a um pequeno número de tons de cor planos com bordas limpas e simplificadas — o clássico visual \"cutout\" ou posterizado, semelhante a uma colagem de papel ou serigrafia.",
+    "aboutBody2": "Privacidade: tudo acontece no seu navegador. Sua foto nunca sai do seu dispositivo e nunca é armazenada em um servidor.",
+    "aboutHowTitle": "Como usar",
+    "aboutStep1": "Envie uma foto — clique na área de upload, arraste e solte, ou pressione Enter.",
+    "aboutStep2": "Ajuste o Número de níveis, a Simplicidade da borda e a Fidelidade da borda para moldar o efeito.",
+    "aboutStep3": "Use Redefinir para o original ou Redefinir todas as configurações a qualquer momento para recomeçar.",
+    "aboutStep4": "Escolha PNG ou JPG e baixe o resultado.",
+    "errorNoFile": "Nenhum arquivo foi selecionado.",
+    "errorUnsupportedFile": "Tipo de arquivo não suportado. Envie uma imagem PNG, JPG, JPEG, WEBP, HEIC ou HEIF.",
+    "errorTooLarge": "O arquivo é muito grande. O tamanho máximo permitido é 40MB.",
+    "errorEmptyFile": "O arquivo selecionado parece estar vazio.",
+    "errorHeic": "Isso parece uma foto HEIC/HEIF (comum em iPhone/Mac), mesmo que o nome termine em .jpg. Converta-a primeiro para JPEG ou PNG — no Mac: abra-a no Preview → File → Export, escolha JPEG/PNG — e envie novamente.",
+    "errorInvalidImage": "Este arquivo não pôde ser lido como uma imagem válida.",
+    "errorProcessing": "Algo deu errado ao processar essa imagem.",
+    "errorExport": "Não foi possível exportar a imagem. Tente novamente.",
+    "statusLoaded": "Imagem carregada. Ajuste o controle deslizante para pré-visualizar o efeito cutout.",
+    "statusResetOriginal": "Imagem redefinida para o estado mais próximo do original.",
+    "statusResetSettings": "Todas as configurações foram redefinidas para os padrões.",
+    "statusDownloadedNewTab": "Download iniciado — se nada aconteceu, use a imagem aberta na nova aba e salve-a a partir de lá.",
+    "statusDownloadedSaveAs": "Download iniciado. Se não funcionou, clique com o botão direito na imagem acima e escolha \"Salvar imagem como…\".",
+    "langLabel": "Idioma"
+  },
+  "pa": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "ਇੱਕ ਫੋਟੋ ਅੱਪਲੋਡ ਕਰੋ, ਇਸਨੂੰ ਗੂੜ੍ਹੇ, ਸਪਾਟ ਟੋਨਾਂ ਵਿੱਚ ਪੋਸਟਰਾਈਜ਼ ਕਰੋ, ਅਤੇ ਇੱਕ ਸ਼ਾਨਦਾਰ ਕਟਆਊਟ-ਸ਼ੈਲੀ ਦੀ ਤਸਵੀਰ ਨਿਰਯਾਤ ਕਰੋ — ਇਹ ਸਭ ਅਸਲ ਸਮੇਂ ਵਿੱਚ।",
+    "uploadPrimary": "ਤਸਵੀਰ ਅੱਪਲੋਡ ਕਰਨ ਲਈ ਕਲਿੱਕ ਕਰੋ, ਖਿੱਚੋ ਅਤੇ ਛੱਡੋ, ਜਾਂ Enter ਦਬਾਓ",
+    "uploadPrimaryReplace": "ਇਸ ਤਸਵੀਰ ਨੂੰ ਬਦਲਣ ਲਈ ਕਲਿੱਕ ਕਰੋ, ਖਿੱਚੋ ਅਤੇ ਛੱਡੋ, ਜਾਂ Enter ਦਬਾਓ",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC ਜਾਂ HEIF · 40MB ਤੱਕ",
+    "levelsLabel": "ਪੱਧਰਾਂ ਦੀ ਗਿਣਤੀ",
+    "simplicityLabel": "ਕਿਨਾਰੇ ਦੀ ਸਾਦਗੀ",
+    "fidelityLabel": "ਕਿਨਾਰੇ ਦੀ ਸ਼ੁੱਧਤਾ",
+    "resetAllSettings": "ਸਾਰੀਆਂ ਸੈਟਿੰਗਾਂ ਰੀਸੈੱਟ ਕਰੋ",
+    "resetToOriginal": "ਮੂਲ ਵਿੱਚ ਰੀਸੈੱਟ ਕਰੋ",
+    "download": "PNG ਡਾਊਨਲੋਡ ਕਰੋ",
+    "downloadPng": "PNG ਡਾਊਨਲੋਡ ਕਰੋ",
+    "downloadJpg": "JPG ਡਾਊਨਲੋਡ ਕਰੋ",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "ਅਜੇ ਤੱਕ ਕੋਈ ਤਸਵੀਰ ਲੋਡ ਨਹੀਂ ਹੋਈ",
+    "menuOpen": "ਵਰਤੋਂਕਾਰ ਗਾਈਡ ਖੋਲ੍ਹੋ",
+    "menuClose": "ਬੰਦ ਕਰੋ",
+    "menuTitle": "ਮੀਨੂ",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "ਵਰਤੋਂਕਾਰ ਗਾਈਡ",
+    "navGuideSub": "ਐਪ ਕਿਵੇਂ ਕੰਮ ਕਰਦੀ ਹੈ",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "ਕਿਸੇ ਵੀ ਫੋਟੋ ਨੂੰ ਗੂੜ੍ਹੀ, ਸਪਾਟ, ਪੋਸਟਰ-ਸ਼ੈਲੀ ਦੀ ਕਲਾ ਵਿੱਚ ਬਦਲੋ।",
+    "aboutBody1": "ਇਹ ਟੂਲ ਇੱਕ ਫੋਟੋ ਲੈਂਦਾ ਹੈ ਅਤੇ ਇਸਨੂੰ ਸਾਫ਼, ਸਰਲ ਕਿਨਾਰਿਆਂ ਨਾਲ ਥੋੜ੍ਹੇ ਜਿਹੇ ਸਪਾਟ ਰੰਗ ਟੋਨਾਂ ਵਿੱਚ ਘਟਾਉਂਦਾ ਹੈ — ਕਾਗਜ਼ੀ ਕੋਲਾਜ ਜਾਂ ਸਕ੍ਰੀਨ ਪ੍ਰਿੰਟ ਵਰਗਾ ਕਲਾਸਿਕ \"ਕਟਆਊਟ\" ਜਾਂ ਪੋਸਟਰਾਈਜ਼ਡ ਦਿੱਖ।",
+    "aboutBody2": "ਪਰਦੇਦਾਰੀ: ਸਭ ਕੁਝ ਤੁਹਾਡੇ ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ ਹੁੰਦਾ ਹੈ। ਤੁਹਾਡੀ ਫੋਟੋ ਕਦੇ ਵੀ ਤੁਹਾਡੀ ਡਿਵਾਈਸ ਤੋਂ ਬਾਹਰ ਨਹੀਂ ਜਾਂਦੀ ਅਤੇ ਕਿਸੇ ਸਰਵਰ ਉੱਤੇ ਸਟੋਰ ਨਹੀਂ ਹੁੰਦੀ।",
+    "aboutHowTitle": "ਕਿਵੇਂ ਵਰਤੀਏ",
+    "aboutStep1": "ਇੱਕ ਫੋਟੋ ਅੱਪਲੋਡ ਕਰੋ — ਅੱਪਲੋਡ ਖੇਤਰ ਉੱਤੇ ਕਲਿੱਕ ਕਰੋ, ਖਿੱਚੋ ਅਤੇ ਛੱਡੋ, ਜਾਂ Enter ਦਬਾਓ।",
+    "aboutStep2": "ਪ੍ਰਭਾਵ ਨੂੰ ਢਾਲਣ ਲਈ ਪੱਧਰਾਂ ਦੀ ਗਿਣਤੀ, ਕਿਨਾਰੇ ਦੀ ਸਾਦਗੀ ਅਤੇ ਕਿਨਾਰੇ ਦੀ ਸ਼ੁੱਧਤਾ ਨੂੰ ਵਿਵਸਥਿਤ ਕਰੋ।",
+    "aboutStep3": "ਦੁਬਾਰਾ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਕਿਸੇ ਵੀ ਸਮੇਂ ਮੂਲ ਵਿੱਚ ਰੀਸੈੱਟ ਕਰੋ ਜਾਂ ਸਾਰੀਆਂ ਸੈਟਿੰਗਾਂ ਰੀਸੈੱਟ ਕਰੋ ਵਰਤੋ।",
+    "aboutStep4": "PNG ਜਾਂ JPG ਚੁਣੋ ਅਤੇ ਆਪਣਾ ਨਤੀਜਾ ਡਾਊਨਲੋਡ ਕਰੋ।",
+    "errorNoFile": "ਕੋਈ ਫਾਈਲ ਨਹੀਂ ਚੁਣੀ ਗਈ।",
+    "errorUnsupportedFile": "ਗੈਰ-ਸਮਰਥਿਤ ਫਾਈਲ ਕਿਸਮ। ਕਿਰਪਾ ਕਰਕੇ PNG, JPG, JPEG, WEBP, HEIC, ਜਾਂ HEIF ਤਸਵੀਰ ਅੱਪਲੋਡ ਕਰੋ।",
+    "errorTooLarge": "ਫਾਈਲ ਬਹੁਤ ਵੱਡੀ ਹੈ। ਵੱਧ ਤੋਂ ਵੱਧ ਮਨਜ਼ੂਰ ਆਕਾਰ 40MB ਹੈ।",
+    "errorEmptyFile": "ਚੁਣੀ ਗਈ ਫਾਈਲ ਖਾਲੀ ਜਾਪਦੀ ਹੈ।",
+    "errorHeic": "ਇਹ ਇੱਕ HEIC/HEIF ਫੋਟੋ ਵਾਂਗ ਲੱਗਦੀ ਹੈ (iPhone/Mac ਉੱਤੇ ਆਮ), ਭਾਵੇਂ ਇਸਦਾ ਨਾਮ .jpg ਨਾਲ ਖਤਮ ਹੁੰਦਾ ਹੋਵੇ। ਕਿਰਪਾ ਕਰਕੇ ਪਹਿਲਾਂ ਇਸਨੂੰ JPEG ਜਾਂ PNG ਵਿੱਚ ਬਦਲੋ — Mac ਉੱਤੇ: Preview ਵਿੱਚ ਖੋਲ੍ਹੋ → File → Export, JPEG/PNG ਚੁਣੋ — ਫਿਰ ਦੁਬਾਰਾ ਅੱਪਲੋਡ ਕਰੋ।",
+    "errorInvalidImage": "ਇਹ ਫਾਈਲ ਇੱਕ ਵੈਧ ਤਸਵੀਰ ਵਜੋਂ ਨਹੀਂ ਪੜ੍ਹੀ ਜਾ ਸਕੀ।",
+    "errorProcessing": "ਉਸ ਤਸਵੀਰ ਨੂੰ ਪ੍ਰੋਸੈਸ ਕਰਦੇ ਸਮੇਂ ਕੁਝ ਗਲਤ ਹੋ ਗਿਆ।",
+    "errorExport": "ਤਸਵੀਰ ਨਿਰਯਾਤ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕੀ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+    "statusLoaded": "ਤਸਵੀਰ ਲੋਡ ਹੋ ਗਈ। ਕਟਆਊਟ ਪ੍ਰਭਾਵ ਦੀ ਝਲਕ ਵੇਖਣ ਲਈ ਸਲਾਈਡਰ ਨੂੰ ਵਿਵਸਥਿਤ ਕਰੋ।",
+    "statusResetOriginal": "ਤਸਵੀਰ ਆਪਣੀ ਮੂਲ ਸਥਿਤੀ ਦੇ ਸਭ ਤੋਂ ਨੇੜੇ ਰੀਸੈੱਟ ਕੀਤੀ ਗਈ।",
+    "statusResetSettings": "ਸਾਰੀਆਂ ਸੈਟਿੰਗਾਂ ਆਪਣੇ ਡਿਫਾਲਟ ਉੱਤੇ ਰੀਸੈੱਟ ਕੀਤੀਆਂ ਗਈਆਂ।",
+    "statusDownloadedNewTab": "ਡਾਊਨਲੋਡ ਸ਼ੁਰੂ ਹੋਇਆ — ਜੇ ਕੁਝ ਨਹੀਂ ਹੋਇਆ, ਤਾਂ ਨਵੇਂ ਟੈਬ ਵਿੱਚ ਖੁੱਲ੍ਹੀ ਤਸਵੀਰ ਵਰਤੋ ਅਤੇ ਉੱਥੋਂ ਸੰਭਾਲੋ।",
+    "statusDownloadedSaveAs": "ਡਾਊਨਲੋਡ ਸ਼ੁਰੂ ਹੋਇਆ। ਜੇ ਇਹ ਕੰਮ ਨਹੀਂ ਕਰਦਾ, ਤਾਂ ਉੱਪਰਲੀ ਤਸਵੀਰ ਉੱਤੇ ਸੱਜਾ-ਕਲਿੱਕ ਕਰੋ ਅਤੇ \"ਤਸਵੀਰ ਇਸ ਤਰ੍ਹਾਂ ਸੰਭਾਲੋ…\" ਚੁਣੋ।",
+    "langLabel": "ਭਾਸ਼ਾ"
+  },
+  "ru": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "Загрузите фото, преобразуйте его в смелые плоские тона и экспортируйте стильное изображение в стиле аппликации — всё в реальном времени.",
+    "uploadPrimary": "Нажмите, перетащите или нажмите Enter, чтобы загрузить изображение",
+    "uploadPrimaryReplace": "Нажмите, перетащите или нажмите Enter, чтобы заменить это изображение",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC или HEIF · до 40 МБ",
+    "levelsLabel": "Количество уровней",
+    "simplicityLabel": "Упрощение краёв",
+    "fidelityLabel": "Точность краёв",
+    "resetAllSettings": "Сбросить все настройки",
+    "resetToOriginal": "Вернуть оригинал",
+    "download": "Скачать PNG",
+    "downloadPng": "Скачать PNG",
+    "downloadJpg": "Скачать JPG",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "Изображение ещё не загружено",
+    "menuOpen": "Открыть руководство пользователя",
+    "menuClose": "Закрыть",
+    "menuTitle": "Меню",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "Руководство пользователя",
+    "navGuideSub": "Как работает приложение",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "Превратите любое фото в смелое плоское искусство в стиле постера.",
+    "aboutBody1": "Этот инструмент берёт фотографию и сводит её к небольшому числу плоских цветовых тонов с чёткими, упрощёнными краями — классический вид «аппликации» или постеризации, похожий на бумажный коллаж или трафаретную печать.",
+    "aboutBody2": "Конфиденциальность: всё происходит в вашем браузере. Ваше фото никогда не покидает устройство и никогда не сохраняется на сервере.",
+    "aboutHowTitle": "Как пользоваться",
+    "aboutStep1": "Загрузите фото — нажмите на область загрузки, перетащите файл или нажмите Enter.",
+    "aboutStep2": "Настройте количество уровней, упрощение краёв и точность краёв, чтобы задать эффект.",
+    "aboutStep3": "Используйте «Вернуть оригинал» или «Сбросить все настройки» в любой момент, чтобы начать заново.",
+    "aboutStep4": "Выберите PNG или JPG и скачайте результат.",
+    "errorNoFile": "Файл не выбран.",
+    "errorUnsupportedFile": "Неподдерживаемый тип файла. Загрузите изображение в формате PNG, JPG, JPEG, WEBP, HEIC или HEIF.",
+    "errorTooLarge": "Файл слишком большой. Максимально допустимый размер — 40 МБ.",
+    "errorEmptyFile": "Выбранный файл кажется пустым.",
+    "errorHeic": "Похоже, это фото в формате HEIC/HEIF (обычное для iPhone/Mac), даже если имя файла заканчивается на .jpg. Сначала преобразуйте его в JPEG или PNG — на Mac: откройте в Preview → File → Export, выберите JPEG/PNG — затем загрузите снова.",
+    "errorInvalidImage": "Не удалось прочитать этот файл как корректное изображение.",
+    "errorProcessing": "При обработке этого изображения что-то пошло не так.",
+    "errorExport": "Не удалось экспортировать изображение. Попробуйте ещё раз.",
+    "statusLoaded": "Изображение загружено. Подвиньте ползунок, чтобы увидеть предпросмотр эффекта.",
+    "statusResetOriginal": "Изображение возвращено к состоянию, максимально близкому к оригиналу.",
+    "statusResetSettings": "Все настройки сброшены к значениям по умолчанию.",
+    "statusDownloadedNewTab": "Скачивание началось — если ничего не произошло, используйте изображение, открытое в новой вкладке, и сохраните его оттуда.",
+    "statusDownloadedSaveAs": "Скачивание началось. Если не сработало, щёлкните правой кнопкой мыши по изображению выше и выберите «Сохранить изображение как…».",
+    "langLabel": "Язык"
+  },
+  "ta": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "ஒரு புகைப்படத்தை பதிவேற்றவும், அதை தடித்த, தட்டையான டோன்களாக போஸ்டரைஸ் செய்யவும், மற்றும் ஒரு நேர்த்தியான கட்அவுட் பாணி படத்தை ஏற்றுமதி செய்யவும் — இவை அனைத்தும் நிகழ் நேரத்தில்.",
+    "uploadPrimary": "படத்தை பதிவேற்ற கிளிக் செய்யவும், இழுத்து விடவும், அல்லது Enter ஐ அழுத்தவும்",
+    "uploadPrimaryReplace": "இந்த படத்தை மாற்ற கிளிக் செய்யவும், இழுத்து விடவும், அல்லது Enter ஐ அழுத்தவும்",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC அல்லது HEIF · அதிகபட்சம் 40MB",
+    "levelsLabel": "நிலைகளின் எண்ணிக்கை",
+    "simplicityLabel": "விளிம்பு எளிமை",
+    "fidelityLabel": "விளிம்பு துல்லியம்",
+    "resetAllSettings": "எல்லா அமைப்புகளையும் மீட்டமை",
+    "resetToOriginal": "மூலத்திற்கு மீட்டமை",
+    "download": "PNG பதிவிறக்கு",
+    "downloadPng": "PNG பதிவிறக்கு",
+    "downloadJpg": "JPG பதிவிறக்கு",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "இன்னும் படம் ஏதும் ஏற்றப்படவில்லை",
+    "menuOpen": "பயனர் வழிகாட்டியை திற",
+    "menuClose": "மூடு",
+    "menuTitle": "மெனு",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "பயனர் வழிகாட்டி",
+    "navGuideSub": "ஆப் எப்படி வேலை செய்கிறது",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "எந்த புகைப்படத்தையும் தடித்த, தட்டையான, போஸ்டர்-பாணி கலையாக மாற்றுங்கள்.",
+    "aboutBody1": "இந்த கருவி ஒரு புகைப்படத்தை எடுத்து, சுத்தமான, எளிமையாக்கப்பட்ட விளிம்புகளுடன் சில தட்டையான வண்ணத் தொனிகளாக குறைக்கிறது — காகித கொலாஜ் அல்லது ஸ்கிரீன் பிரிண்ட் போன்ற பாரம்பரிய \"கட்அவுட்\" அல்லது போஸ்டரைஸ் தோற்றம்.",
+    "aboutBody2": "தனியுரிமை: எல்லாம் உங்கள் உலாவியில் நடக்கும். உங்கள் புகைப்படம் ஒருபோதும் உங்கள் சாதனத்தை விட்டு வெளியேறாது, எந்த சேவையகத்திலும் சேமிக்கப்படாது.",
+    "aboutHowTitle": "எப்படி பயன்படுத்துவது",
+    "aboutStep1": "ஒரு புகைப்படத்தை பதிவேற்றவும் — பதிவேற்ற பகுதியை கிளிக் செய்யவும், இழுத்து விடவும், அல்லது Enter ஐ அழுத்தவும்.",
+    "aboutStep2": "விளைவை வடிவமைக்க நிலைகளின் எண்ணிக்கை, விளிம்பு எளிமை மற்றும் விளிம்பு துல்லியத்தை சரிசெய்யவும்.",
+    "aboutStep3": "மீண்டும் தொடங்க எந்த நேரத்திலும் மூலத்திற்கு மீட்டமை அல்லது எல்லா அமைப்புகளையும் மீட்டமை பயன்படுத்தவும்.",
+    "aboutStep4": "PNG அல்லது JPG தேர்ந்தெடுத்து உங்கள் முடிவை பதிவிறக்கவும்.",
+    "errorNoFile": "எந்த கோப்பும் தேர்ந்தெடுக்கப்படவில்லை.",
+    "errorUnsupportedFile": "ஆதரிக்கப்படாத கோப்பு வகை. தயவுசெய்து PNG, JPG, JPEG, WEBP, HEIC, அல்லது HEIF படத்தை பதிவேற்றவும்.",
+    "errorTooLarge": "கோப்பு மிகப் பெரியது. அனுமதிக்கப்பட்ட அதிகபட்ச அளவு 40MB.",
+    "errorEmptyFile": "தேர்ந்தெடுக்கப்பட்ட கோப்பு காலியாக தெரிகிறது.",
+    "errorHeic": "இது ஒரு HEIC/HEIF புகைப்படம் போல் தெரிகிறது (iPhone/Mac இல் பொதுவானது), அதன் பெயர் .jpg இல் முடிந்தாலும் கூட. முதலில் அதை JPEG அல்லது PNG ஆக மாற்றவும் — Mac இல்: Preview இல் திறக்கவும் → File → Export, JPEG/PNG தேர்ந்தெடுக்கவும் — பின்னர் மீண்டும் பதிவேற்றவும்.",
+    "errorInvalidImage": "இந்த கோப்பு சரியான படமாக படிக்க முடியவில்லை.",
+    "errorProcessing": "அந்த படத்தை செயலாக்கும் போது ஏதோ தவறு ஏற்பட்டது.",
+    "errorExport": "படத்தை ஏற்றுமதி செய்ய முடியவில்லை. மீண்டும் முயற்சிக்கவும்.",
+    "statusLoaded": "படம் ஏற்றப்பட்டது. கட்அவுட் விளைவை முன்னோட்டமிட ஸ்லைடரை சரிசெய்யவும்.",
+    "statusResetOriginal": "படம் அதன் மூலத்திற்கு மிக நெருக்கமான நிலைக்கு மீட்டமைக்கப்பட்டது.",
+    "statusResetSettings": "எல்லா அமைப்புகளும் அவற்றின் இயல்புநிலைக்கு மீட்டமைக்கப்பட்டன.",
+    "statusDownloadedNewTab": "பதிவிறக்கம் தொடங்கியது — ஒன்றும் நடக்கவில்லை என்றால், புதிய தாவலில் திறக்கப்பட்ட படத்தை பயன்படுத்தி அங்கிருந்து சேமிக்கவும்.",
+    "statusDownloadedSaveAs": "பதிவிறக்கம் தொடங்கியது. இது வேலை செய்யவில்லை என்றால், மேலே உள்ள படத்தில் வலது கிளிக் செய்து \"படத்தை இப்படி சேமி…\" என்பதைத் தேர்ந்தெடுக்கவும்.",
+    "langLabel": "மொழி"
+  },
+  "te": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "ఒక ఫోటోను అప్‌లోడ్ చేయండి, దానిని బోల్డ్, ఫ్లాట్ టోన్‌లుగా పోస్టరైజ్ చేయండి, మరియు నాజూకైన కట్అవుట్-శైలి చిత్రాన్ని ఎగుమతి చేయండి — ఇవన్నీ నిజ సమయంలో.",
+    "uploadPrimary": "చిత్రాన్ని అప్‌లోడ్ చేయడానికి క్లిక్ చేయండి, డ్రాగ్ & డ్రాప్ చేయండి, లేదా Enter నొక్కండి",
+    "uploadPrimaryReplace": "ఈ చిత్రాన్ని మార్చడానికి క్లిక్ చేయండి, డ్రాగ్ & డ్రాప్ చేయండి, లేదా Enter నొక్కండి",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC లేదా HEIF · 40MB వరకు",
+    "levelsLabel": "స్థాయిల సంఖ్య",
+    "simplicityLabel": "అంచు సరళత",
+    "fidelityLabel": "అంచు నిజాయితీ",
+    "resetAllSettings": "అన్ని సెట్టింగ్‌లను రీసెట్ చేయండి",
+    "resetToOriginal": "అసలైనదానికి రీసెట్ చేయండి",
+    "download": "PNG డౌన్‌లోడ్ చేయండి",
+    "downloadPng": "PNG డౌన్‌లోడ్ చేయండి",
+    "downloadJpg": "JPG డౌన్‌లోడ్ చేయండి",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "ఇంకా చిత్రం లోడ్ కాలేదు",
+    "menuOpen": "వినియోగదారు గైడ్‌ను తెరవండి",
+    "menuClose": "మూసివేయండి",
+    "menuTitle": "మెనూ",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "వినియోగదారు గైడ్",
+    "navGuideSub": "యాప్ ఎలా పనిచేస్తుంది",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "ఏదైనా ఫోటోను బోల్డ్, ఫ్లాట్, పోస్టర్-శైలి కళగా మార్చండి.",
+    "aboutBody1": "ఈ సాధనం ఒక ఫోటోను తీసుకొని, శుభ్రమైన, సరళీకృత అంచులతో కొన్ని ఫ్లాట్ రంగు టోన్‌లకు తగ్గిస్తుంది — పేపర్ కొల్లాజ్ లేదా స్క్రీన్ ప్రింట్ లాంటి క్లాసిక్ \"కట్అవుట్\" లేదా పోస్టరైజ్డ్ లుక్.",
+    "aboutBody2": "గోప్యత: ప్రతిదీ మీ బ్రౌజర్‌లోనే జరుగుతుంది. మీ ఫోటో మీ పరికరాన్ని ఎప్పటికీ వదిలిపెట్టదు మరియు ఏ సర్వర్‌లోనూ నిల్వ చేయబడదు.",
+    "aboutHowTitle": "ఎలా ఉపయోగించాలి",
+    "aboutStep1": "ఒక ఫోటోను అప్‌లోడ్ చేయండి — అప్‌లోడ్ ప్రాంతంపై క్లిక్ చేయండి, డ్రాగ్ & డ్రాప్ చేయండి, లేదా Enter నొక్కండి.",
+    "aboutStep2": "ప్రభావాన్ని రూపొందించడానికి స్థాయిల సంఖ్య, అంచు సరళత మరియు అంచు నిజాయితీని సర్దుబాటు చేయండి.",
+    "aboutStep3": "మళ్లీ మొదలుపెట్టడానికి ఎప్పుడైనా అసలైనదానికి రీసెట్ చేయండి లేదా అన్ని సెట్టింగ్‌లను రీసెట్ చేయండి ఉపయోగించండి.",
+    "aboutStep4": "PNG లేదా JPG ఎంచుకుని మీ ఫలితాన్ని డౌన్‌లోడ్ చేయండి.",
+    "errorNoFile": "ఏ ఫైల్ ఎంచుకోబడలేదు.",
+    "errorUnsupportedFile": "మద్దతు లేని ఫైల్ రకం. దయచేసి PNG, JPG, JPEG, WEBP, HEIC, లేదా HEIF చిత్రాన్ని అప్‌లోడ్ చేయండి.",
+    "errorTooLarge": "ఫైల్ చాలా పెద్దది. అనుమతించబడిన గరిష్ట పరిమాణం 40MB.",
+    "errorEmptyFile": "ఎంచుకున్న ఫైల్ ఖాళీగా కనిపిస్తోంది.",
+    "errorHeic": "ఇది HEIC/HEIF ఫోటోలా కనిపిస్తోంది (iPhone/Mac‌లో సాధారణం), దాని పేరు .jpgతో ముగిసినప్పటికీ. దయచేసి మొదట దీన్ని JPEG లేదా PNGకి మార్చండి — Macలో: Previewలో తెరవండి → File → Export, JPEG/PNG ఎంచుకోండి — తర్వాత మళ్లీ అప్‌లోడ్ చేయండి.",
+    "errorInvalidImage": "ఈ ఫైల్‌ను చెల్లుబాటు అయ్యే చిత్రంగా చదవలేకపోయాము.",
+    "errorProcessing": "ఆ చిత్రాన్ని ప్రాసెస్ చేస్తున్నప్పుడు ఏదో తప్పు జరిగింది.",
+    "errorExport": "చిత్రాన్ని ఎగుమతి చేయలేకపోయాము. దయచేసి మళ్లీ ప్రయత్నించండి.",
+    "statusLoaded": "చిత్రం లోడ్ అయ్యింది. కట్అవుట్ ప్రభావాన్ని ప్రివ్యూ చేయడానికి స్లయిడర్‌ను సర్దుబాటు చేయండి.",
+    "statusResetOriginal": "చిత్రం దాని అసలైన స్థితికి అత్యంత దగ్గరగా రీసెట్ చేయబడింది.",
+    "statusResetSettings": "అన్ని సెట్టింగ్‌లు వాటి డిఫాల్ట్‌లకు రీసెట్ చేయబడ్డాయి.",
+    "statusDownloadedNewTab": "డౌన్‌లోడ్ ప్రారంభమైంది — ఏమీ జరగకపోతే, కొత్త ట్యాబ్‌లో తెరిచిన చిత్రాన్ని ఉపయోగించి అక్కడి నుండి సేవ్ చేయండి.",
+    "statusDownloadedSaveAs": "డౌన్‌లోడ్ ప్రారంభమైంది. అది పనిచేయకపోతే, పైన ఉన్న చిత్రంపై కుడి-క్లిక్ చేసి \"చిత్రాన్ని ఇలా సేవ్ చేయండి…\" ఎంచుకోండి.",
+    "langLabel": "భాష"
+  },
+  "tr": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "Bir fotoğraf yükleyin, kalın düz tonlara ayırın (posterize) ve şık bir cutout-tarzı görsel olarak anında dışa aktarın.",
+    "uploadPrimary": "Görsel yüklemek için tıklayın, sürükleyip bırakın veya Enter'a basın",
+    "uploadPrimaryReplace": "Değiştirmek için tıklayın, sürükleyip bırakın veya Enter'a basın",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC veya HEIF · en fazla 40MB",
+    "levelsLabel": "Seviye Sayısı",
+    "simplicityLabel": "Kenar Sadeliği",
+    "fidelityLabel": "Kenar Netliği",
+    "resetAllSettings": "Tüm Ayarları Sıfırla",
+    "resetToOriginal": "Orijinale Sıfırla",
+    "download": "PNG İndir",
+    "downloadPng": "PNG İndir",
+    "downloadJpg": "JPG İndir",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "Henüz görsel yüklenmedi",
+    "menuOpen": "Kullanım kılavuzunu aç",
+    "menuClose": "Kapat",
+    "menuTitle": "Menü",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "Kullanım Kılavuzu",
+    "navGuideSub": "Uygulama nasıl çalışır",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "Herhangi bir fotoğrafı kalın, düz tonlu, poster tarzı bir esere dönüştürün.",
+    "aboutBody1": "Bu araç bir fotoğrafı alır ve onu az sayıda düz renk tonuna, sade ve temiz kenarlarla indirger — kağıt kolaj veya serigrafi baskıya benzeyen klasik \"cutout\" / posterize görünümü.",
+    "aboutBody2": "Gizlilik: Her şey tarayıcınızda gerçekleşir. Verileriniz cihazınızdan çıkmaz ve hiçbir sunucuda saklanmaz.",
+    "aboutHowTitle": "Nasıl kullanılır",
+    "aboutStep1": "Bir fotoğraf yükleyin — yükleme alanına tıklayın, sürükleyip bırakın veya Enter'a basın.",
+    "aboutStep2": "Efekti şekillendirmek için Seviye Sayısı, Kenar Sadeliği ve Kenar Netliği'ni ayarlayın.",
+    "aboutStep3": "İstediğiniz zaman Orijinale Sıfırla veya Tüm Ayarları Sıfırla ile baştan başlayın.",
+    "aboutStep4": "PNG veya JPG seçin ve sonucu indirin.",
+    "errorNoFile": "Hiçbir dosya seçilmedi.",
+    "errorUnsupportedFile": "Desteklenmeyen dosya türü. Lütfen PNG, JPG, JPEG, WEBP, HEIC veya HEIF yükleyin.",
+    "errorTooLarge": "Dosya çok büyük. İzin verilen maksimum boyut 40MB.",
+    "errorEmptyFile": "Seçilen dosya boş görünüyor.",
+    "errorHeic": "Bu bir HEIC/HEIF fotoğrafı gibi görünüyor (iPhone/Mac'te yaygın), adı .jpg ile bitse bile. Lütfen önce JPEG veya PNG'ye çevirin — Mac'te: Preview → File → Export ile JPEG/PNG seçin — sonra tekrar yükleyin.",
+    "errorInvalidImage": "Bu dosya geçerli bir görsel olarak okunamadı.",
+    "errorProcessing": "Bu görsel işlenirken bir sorun oluştu.",
+    "errorExport": "Görsel dışa aktarılamadı. Lütfen tekrar deneyin.",
+    "statusLoaded": "Görsel yüklendi. Efekti önizlemek için sliderı hareket ettirin.",
+    "statusResetOriginal": "Görsel, orijinaline en yakın haline sıfırlandı.",
+    "statusResetSettings": "Tüm ayarlar varsayılanlarına sıfırlandı.",
+    "statusDownloadedNewTab": "İndirme başladı — hiçbir şey olmadıysa, yeni sekmede açılan görseli oradan kaydedin.",
+    "statusDownloadedSaveAs": "İndirme başladı. Çalışmadıysa, yukarıdaki görsele sağ tıklayıp \"Görseli Farklı Kaydet…\" seçin.",
+    "langLabel": "Dil"
+  },
+  "ur": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "ایک تصویر اپ لوڈ کریں، اسے دبنگ فلیٹ رنگوں میں پوسٹرائز کریں، اور ایک شاندار کٹ آؤٹ طرز کی تصویر برآمد کریں — یہ سب حقیقی وقت میں۔",
+    "uploadPrimary": "تصویر اپ لوڈ کرنے کے لیے کلک کریں، ڈریگ اینڈ ڈراپ کریں، یا Enter دبائیں",
+    "uploadPrimaryReplace": "اس تصویر کو تبدیل کرنے کے لیے کلک کریں، ڈریگ اینڈ ڈراپ کریں، یا Enter دبائیں",
+    "uploadHint": "PNG، JPG، JPEG، WEBP، HEIC یا HEIF · زیادہ سے زیادہ 40MB",
+    "levelsLabel": "سطحوں کی تعداد",
+    "simplicityLabel": "کنارے کی سادگی",
+    "fidelityLabel": "کنارے کی درستگی",
+    "resetAllSettings": "تمام ترتیبات ری سیٹ کریں",
+    "resetToOriginal": "اصل حالت پر ری سیٹ کریں",
+    "download": "PNG ڈاؤن لوڈ کریں",
+    "downloadPng": "PNG ڈاؤن لوڈ کریں",
+    "downloadJpg": "JPG ڈاؤن لوڈ کریں",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "ابھی تک کوئی تصویر لوڈ نہیں ہوئی",
+    "menuOpen": "صارف گائیڈ کھولیں",
+    "menuClose": "بند کریں",
+    "menuTitle": "مینو",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "صارف گائیڈ",
+    "navGuideSub": "ایپ کیسے کام کرتی ہے",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "کسی بھی تصویر کو دبنگ، فلیٹ، پوسٹر طرز کے فن میں تبدیل کریں۔",
+    "aboutBody1": "یہ ٹول ایک تصویر لیتا ہے اور اسے صاف اور سادہ کناروں کے ساتھ چند فلیٹ رنگی ٹونز تک محدود کر دیتا ہے — کلاسک \"کٹ آؤٹ\" یا پوسٹرائزڈ شکل، جو کاغذی کولاج یا اسکرین پرنٹ سے ملتی جلتی ہے۔",
+    "aboutBody2": "رازداری: سب کچھ آپ کے براؤزر میں ہوتا ہے۔ آپ کی تصویر کبھی بھی آپ کے آلے سے باہر نہیں جاتی اور کسی سرور پر محفوظ نہیں کی جاتی۔",
+    "aboutHowTitle": "استعمال کا طریقہ",
+    "aboutStep1": "ایک تصویر اپ لوڈ کریں — اپ لوڈ ایریا پر کلک کریں، ڈریگ اینڈ ڈراپ کریں، یا Enter دبائیں۔",
+    "aboutStep2": "اثر کو ترتیب دینے کے لیے سطحوں کی تعداد، کنارے کی سادگی اور کنارے کی درستگی کو ایڈجسٹ کریں۔",
+    "aboutStep3": "کسی بھی وقت دوبارہ شروع کرنے کے لیے اصل حالت پر ری سیٹ کریں یا تمام ترتیبات ری سیٹ کریں استعمال کریں۔",
+    "aboutStep4": "PNG یا JPG منتخب کریں اور اپنا نتیجہ ڈاؤن لوڈ کریں۔",
+    "errorNoFile": "کوئی فائل منتخب نہیں کی گئی۔",
+    "errorUnsupportedFile": "غیر معاون فائل کی قسم۔ براہ کرم PNG، JPG، JPEG، WEBP، HEIC، یا HEIF تصویر اپ لوڈ کریں۔",
+    "errorTooLarge": "فائل بہت بڑی ہے۔ زیادہ سے زیادہ اجازت یافتہ سائز 40MB ہے۔",
+    "errorEmptyFile": "منتخب کردہ فائل خالی معلوم ہوتی ہے۔",
+    "errorHeic": "یہ ایک HEIC/HEIF تصویر لگتی ہے (iPhone/Mac پر عام)، چاہے اس کا نام .jpg پر ختم ہو۔ براہ کرم پہلے اسے JPEG یا PNG میں تبدیل کریں — Mac پر: اسے Preview میں کھولیں ← File ← Export، JPEG/PNG منتخب کریں — پھر دوبارہ اپ لوڈ کریں۔",
+    "errorInvalidImage": "اس فائل کو درست تصویر کے طور پر نہیں پڑھا جا سکا۔",
+    "errorProcessing": "اس تصویر پر کارروائی کرتے وقت کچھ غلط ہو گیا۔",
+    "errorExport": "تصویر برآمد نہیں کی جا سکی۔ براہ کرم دوبارہ کوشش کریں۔",
+    "statusLoaded": "تصویر لوڈ ہو گئی۔ کٹ آؤٹ اثر دیکھنے کے لیے سلائیڈر ایڈجسٹ کریں۔",
+    "statusResetOriginal": "تصویر اپنی اصل حالت کے قریب ترین حالت پر ری سیٹ ہو گئی۔",
+    "statusResetSettings": "تمام ترتیبات اپنی طے شدہ حالتوں پر ری سیٹ ہو گئیں۔",
+    "statusDownloadedNewTab": "ڈاؤن لوڈ شروع ہو گیا — اگر کچھ نہیں ہوا تو نئے ٹیب میں کھلی تصویر استعمال کریں اور وہاں سے محفوظ کریں۔",
+    "statusDownloadedSaveAs": "ڈاؤن لوڈ شروع ہو گیا۔ اگر کام نہ کرے تو اوپر والی تصویر پر دائیں کلک کریں اور \"تصویر بطور محفوظ کریں…\" منتخب کریں۔",
+    "langLabel": "زبان"
+  },
+  "vi": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "Tải lên một bức ảnh, chuyển thành các tông màu phẳng đậm nét theo phong cách áp phích, và xuất ra hình ảnh kiểu cắt dán tinh tế — tất cả theo thời gian thực.",
+    "uploadPrimary": "Nhấp, kéo & thả, hoặc nhấn Enter để tải ảnh lên",
+    "uploadPrimaryReplace": "Nhấp, kéo & thả, hoặc nhấn Enter để thay ảnh này",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC hoặc HEIF · tối đa 40MB",
+    "levelsLabel": "Số lượng cấp độ",
+    "simplicityLabel": "Độ đơn giản của viền",
+    "fidelityLabel": "Độ trung thực của viền",
+    "resetAllSettings": "Đặt lại tất cả cài đặt",
+    "resetToOriginal": "Đặt lại về ảnh gốc",
+    "download": "Tải PNG xuống",
+    "downloadPng": "Tải PNG xuống",
+    "downloadJpg": "Tải JPG xuống",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "Chưa có ảnh nào được tải lên",
+    "menuOpen": "Mở hướng dẫn sử dụng",
+    "menuClose": "Đóng",
+    "menuTitle": "Menu",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "Hướng dẫn sử dụng",
+    "navGuideSub": "Cách ứng dụng hoạt động",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "Biến bất kỳ bức ảnh nào thành tác phẩm nghệ thuật kiểu áp phích đậm nét.",
+    "aboutBody1": "Công cụ này lấy một bức ảnh và rút gọn thành một số ít tông màu phẳng với các đường viền sạch, đơn giản hóa — phong cách \"cắt dán\" hoặc áp phích cổ điển, giống như tranh cắt dán giấy hoặc in lụa.",
+    "aboutBody2": "Quyền riêng tư: Mọi thứ diễn ra trong trình duyệt của bạn. Ảnh của bạn không bao giờ rời khỏi thiết bị và không bao giờ được lưu trên máy chủ.",
+    "aboutHowTitle": "Cách sử dụng",
+    "aboutStep1": "Tải ảnh lên — nhấp vào khu vực tải lên, kéo & thả, hoặc nhấn Enter.",
+    "aboutStep2": "Điều chỉnh Số lượng cấp độ, Độ đơn giản của viền và Độ trung thực của viền để tạo hiệu ứng.",
+    "aboutStep3": "Dùng Đặt lại về ảnh gốc hoặc Đặt lại tất cả cài đặt bất cứ lúc nào để bắt đầu lại.",
+    "aboutStep4": "Chọn PNG hoặc JPG và tải kết quả xuống.",
+    "errorNoFile": "Chưa có tệp nào được chọn.",
+    "errorUnsupportedFile": "Loại tệp không được hỗ trợ. Vui lòng tải lên ảnh PNG, JPG, JPEG, WEBP, HEIC hoặc HEIF.",
+    "errorTooLarge": "Tệp quá lớn. Kích thước tối đa cho phép là 40MB.",
+    "errorEmptyFile": "Tệp đã chọn dường như trống.",
+    "errorHeic": "Đây có vẻ là ảnh HEIC/HEIF (phổ biến trên iPhone/Mac), ngay cả khi tên tệp kết thúc bằng .jpg. Vui lòng chuyển đổi sang JPEG hoặc PNG trước — trên Mac: mở trong Preview → File → Export, chọn JPEG/PNG — rồi tải lên lại.",
+    "errorInvalidImage": "Không thể đọc tệp này như một hình ảnh hợp lệ.",
+    "errorProcessing": "Đã xảy ra sự cố khi xử lý hình ảnh đó.",
+    "errorExport": "Không thể xuất hình ảnh. Vui lòng thử lại.",
+    "statusLoaded": "Đã tải ảnh lên. Điều chỉnh thanh trượt để xem trước hiệu ứng cắt dán.",
+    "statusResetOriginal": "Ảnh đã được đặt lại về trạng thái gần với bản gốc nhất.",
+    "statusResetSettings": "Tất cả cài đặt đã được đặt lại về mặc định.",
+    "statusDownloadedNewTab": "Đã bắt đầu tải xuống — nếu không có gì xảy ra, hãy dùng ảnh mở trong tab mới và lưu từ đó.",
+    "statusDownloadedSaveAs": "Đã bắt đầu tải xuống. Nếu không thành công, hãy nhấp chuột phải vào ảnh phía trên và chọn \"Lưu ảnh với tên…\".",
+    "langLabel": "Ngôn ngữ"
+  },
+  "fa": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "یک عکس بارگذاری کنید، آن را به تن‌های رنگی صاف و پررنگ تبدیل کنید و یک تصویر شیک به سبک کات‌اوت خروجی بگیرید — همه در زمان واقعی.",
+    "uploadPrimary": "برای بارگذاری تصویر کلیک کنید، بکشید و رها کنید یا Enter را بزنید",
+    "uploadPrimaryReplace": "برای جایگزینی این تصویر کلیک کنید، بکشید و رها کنید یا Enter را بزنید",
+    "uploadHint": "PNG، JPG، JPEG، WEBP، HEIC یا HEIF · حداکثر ۴۰ مگابایت",
+    "levelsLabel": "تعداد سطوح",
+    "simplicityLabel": "سادگی لبه",
+    "fidelityLabel": "وفاداری لبه",
+    "resetAllSettings": "بازنشانی همه تنظیمات",
+    "resetToOriginal": "بازگشت به حالت اصلی",
+    "download": "دانلود PNG",
+    "downloadPng": "دانلود PNG",
+    "downloadJpg": "دانلود JPG",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "هنوز تصویری بارگذاری نشده است",
+    "menuOpen": "باز کردن راهنمای کاربر",
+    "menuClose": "بستن",
+    "menuTitle": "منو",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "راهنمای کاربر",
+    "navGuideSub": "برنامه چگونه کار می‌کند",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "هر عکسی را به یک اثر هنری پررنگ و پوستری تبدیل کنید.",
+    "aboutBody1": "این ابزار یک عکس را می‌گیرد و آن را به تعداد کمی تن رنگی صاف با لبه‌های ساده و تمیز کاهش می‌دهد — همان ظاهر کلاسیک «کات‌اوت» یا پوستری، شبیه کلاژ کاغذی یا چاپ سیلک.",
+    "aboutBody2": "حریم خصوصی: همه چیز در مرورگر شما انجام می‌شود. عکس شما هرگز دستگاه شما را ترک نمی‌کند و روی هیچ سروری ذخیره نمی‌شود.",
+    "aboutHowTitle": "نحوه استفاده",
+    "aboutStep1": "یک عکس بارگذاری کنید — روی ناحیه بارگذاری کلیک کنید، بکشید و رها کنید یا Enter را بزنید.",
+    "aboutStep2": "برای شکل‌دادن به جلوه، تعداد سطوح، سادگی لبه و وفاداری لبه را تنظیم کنید.",
+    "aboutStep3": "هر زمان خواستید از ابتدا شروع کنید، از بازگشت به حالت اصلی یا بازنشانی همه تنظیمات استفاده کنید.",
+    "aboutStep4": "PNG یا JPG را انتخاب کرده و نتیجه را دانلود کنید.",
+    "errorNoFile": "هیچ فایلی انتخاب نشد.",
+    "errorUnsupportedFile": "نوع فایل پشتیبانی نمی‌شود. لطفاً یک تصویر PNG، JPG، JPEG، WEBP، HEIC یا HEIF بارگذاری کنید.",
+    "errorTooLarge": "فایل خیلی بزرگ است. حداکثر اندازه مجاز ۴۰ مگابایت است.",
+    "errorEmptyFile": "به نظر می‌رسد فایل انتخاب‌شده خالی است.",
+    "errorHeic": "به نظر می‌رسد این یک عکس HEIC/HEIF است (رایج در iPhone/Mac)، حتی اگر نام آن به .jpg ختم شود. لطفاً ابتدا آن را به JPEG یا PNG تبدیل کنید — در Mac: در Preview باز کنید ← File ← Export و JPEG/PNG را انتخاب کنید — سپس دوباره بارگذاری کنید.",
+    "errorInvalidImage": "این فایل به‌عنوان یک تصویر معتبر خوانده نشد.",
+    "errorProcessing": "هنگام پردازش این تصویر مشکلی پیش آمد.",
+    "errorExport": "تصویر خروجی نگرفت. لطفاً دوباره تلاش کنید.",
+    "statusLoaded": "تصویر بارگذاری شد. برای پیش‌نمایش جلوه کات‌اوت، لغزنده را تنظیم کنید.",
+    "statusResetOriginal": "تصویر به نزدیک‌ترین حالت به اصل خود بازگردانده شد.",
+    "statusResetSettings": "همه تنظیمات به مقادیر پیش‌فرض بازنشانی شدند.",
+    "statusDownloadedNewTab": "دانلود آغاز شد — اگر اتفاقی نیفتاد، از تصویری که در برگه جدید باز شده استفاده کرده و از آنجا ذخیره کنید.",
+    "statusDownloadedSaveAs": "دانلود آغاز شد. اگر کار نکرد، روی تصویر بالا کلیک راست کرده و «ذخیره تصویر با نام…» را انتخاب کنید.",
+    "langLabel": "زبان"
+  },
+  "fil": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "Mag-upload ng larawan, gawing makapal at flat na mga tono ang epekto, at i-export ang isang pinong larawang cutout-style — lahat sa real time.",
+    "uploadPrimary": "Mag-click, i-drag at i-drop, o pindutin ang Enter para mag-upload ng larawan",
+    "uploadPrimaryReplace": "Mag-click, i-drag at i-drop, o pindutin ang Enter para palitan ang larawang ito",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC, o HEIF · hanggang 40MB",
+    "levelsLabel": "Bilang ng mga Antas",
+    "simplicityLabel": "Pagiging Simple ng Gilid",
+    "fidelityLabel": "Katumpakan ng Gilid",
+    "resetAllSettings": "I-reset ang Lahat ng Setting",
+    "resetToOriginal": "I-reset sa Orihinal",
+    "download": "I-download ang PNG",
+    "downloadPng": "I-download ang PNG",
+    "downloadJpg": "I-download ang JPG",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "Wala pang larawang na-load",
+    "menuOpen": "Buksan ang gabay ng user",
+    "menuClose": "Isara",
+    "menuTitle": "Menu",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "Gabay ng Gumagamit",
+    "navGuideSub": "Paano gumagana ang app",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "Gawing makapal at flat na sining na estilong poster ang anumang larawan.",
+    "aboutBody1": "Kinukuha ng tool na ito ang isang larawan at binabawasan ito sa iilang flat na kulay na tono na may malinis at simpleng mga gilid — ang klasikong hitsura ng \"cutout\" o posterized, katulad ng paper collage o screen print.",
+    "aboutBody2": "Privacy: Nangyayari ang lahat sa iyong browser. Hindi umaalis ang iyong larawan sa iyong device at hindi ito ise-save sa anumang server.",
+    "aboutHowTitle": "Paano gamitin",
+    "aboutStep1": "Mag-upload ng larawan — i-click ang upload area, i-drag at i-drop, o pindutin ang Enter.",
+    "aboutStep2": "I-adjust ang Bilang ng mga Antas, Pagiging Simple ng Gilid, at Katumpakan ng Gilid para hubugin ang epekto.",
+    "aboutStep3": "Gamitin ang I-reset sa Orihinal o I-reset ang Lahat ng Setting kahit kailan para magsimulang muli.",
+    "aboutStep4": "Piliin ang PNG o JPG at i-download ang resulta.",
+    "errorNoFile": "Walang napiling file.",
+    "errorUnsupportedFile": "Hindi suportadong uri ng file. Mangyaring mag-upload ng larawang PNG, JPG, JPEG, WEBP, HEIC, o HEIF.",
+    "errorTooLarge": "Masyadong malaki ang file. Ang pinakamalaking pinapayagang sukat ay 40MB.",
+    "errorEmptyFile": "Mukhang walang laman ang napiling file.",
+    "errorHeic": "Mukhang isa itong HEIC/HEIF na larawan (karaniwan sa iPhone/Mac), kahit na nagtatapos sa .jpg ang pangalan nito. Mangyaring i-convert muna ito sa JPEG o PNG — sa Mac: buksan sa Preview → File → Export, piliin ang JPEG/PNG — pagkatapos i-upload ulit.",
+    "errorInvalidImage": "Hindi mabasa ang file na ito bilang isang wastong larawan.",
+    "errorProcessing": "May naganap na problema habang pinoproseso ang larawang iyon.",
+    "errorExport": "Hindi ma-export ang larawan. Pakisubukang muli.",
+    "statusLoaded": "Na-load ang larawan. I-adjust ang slider para ma-preview ang epekto ng cutout.",
+    "statusResetOriginal": "Na-reset ang larawan sa pinakamalapit na katayuan sa orihinal nito.",
+    "statusResetSettings": "Na-reset ang lahat ng setting sa kanilang default.",
+    "statusDownloadedNewTab": "Nagsimula ang pag-download — kung walang nangyari, gamitin ang larawang bumukas sa bagong tab at i-save mula doon.",
+    "statusDownloadedSaveAs": "Nagsimula ang pag-download. Kung hindi gumana, i-right-click ang larawan sa itaas at piliin ang \"I-save ang Larawan Bilang…\".",
+    "langLabel": "Wika"
+  },
+  "ha": {
+    "appTitle": "Cutout Effect Studio",
+    "appSubtitle": "Loda hoto, mai da ita zuwa launuka masu kauri da lebur, sannan ka fitar da hoto mai kyawon salon cutout — duk a lokaci na ainihi.",
+    "uploadPrimary": "Danna, ja ka jefa, ko danna Enter don loda hoto",
+    "uploadPrimaryReplace": "Danna, ja ka jefa, ko danna Enter don musanya wannan hoto",
+    "uploadHint": "PNG, JPG, JPEG, WEBP, HEIC ko HEIF · har zuwa 40MB",
+    "levelsLabel": "Yawan Matakai",
+    "simplicityLabel": "Sauƙin Gefe",
+    "fidelityLabel": "Amincin Gefe",
+    "resetAllSettings": "Sake Saita Dukkan Saituna",
+    "resetToOriginal": "Mayar zuwa Ainihi",
+    "download": "Sauke PNG",
+    "downloadPng": "Sauke PNG",
+    "downloadJpg": "Sauke JPG",
+    "formatPng": "PNG",
+    "formatJpg": "JPG",
+    "noImage": "Babu hoton da aka loda tukuna",
+    "menuOpen": "Buɗe jagorar amfani",
+    "menuClose": "Rufe",
+    "menuTitle": "Menu",
+    "navHomeLabel": "Cutout Effect Studio",
+    "navGuideLabel": "Jagorar Amfani",
+    "navGuideSub": "Yadda app ɗin ke aiki",
+    "aboutTitle": "Cutout Effect Studio",
+    "aboutTagline": "Mai da kowane hoto zuwa fasaha mai kauri, lebur, salon poster.",
+    "aboutBody1": "Wannan kayan aiki yana ɗaukar hoto ya rage shi zuwa ƴan launuka lebur kaɗan tare da tsayayyun gefuna masu tsabta — sanannen kamannin \"cutout\" ko poster, kama da collage na takarda ko bugu na allo.",
+    "aboutBody2": "Sirri: Komai yana faruwa a cikin burauzarka. Hoton ka ba ya taɓa barin na'urar ka kuma ba a taɓa ajiye shi a kowane sabar.",
+    "aboutHowTitle": "Yadda ake amfani da shi",
+    "aboutStep1": "Loda hoto — danna wurin lodawa, ja ka jefa, ko danna Enter.",
+    "aboutStep2": "Daidaita Yawan Matakai, Sauƙin Gefe, da Amincin Gefe don tsara tasirin.",
+    "aboutStep3": "Yi amfani da Mayar zuwa Ainihi ko Sake Saita Dukkan Saituna a kowane lokaci don sake farawa.",
+    "aboutStep4": "Zaɓi PNG ko JPG sannan ka sauke sakamakon.",
+    "errorNoFile": "Ba a zaɓi wani fayil ba.",
+    "errorUnsupportedFile": "Nau'in fayil da ba a tallafawa. Da fatan za a loda hoton PNG, JPG, JPEG, WEBP, HEIC, ko HEIF.",
+    "errorTooLarge": "Fayil ɗin ya yi girma sosai. Iyakar girman da aka yarda shine 40MB.",
+    "errorEmptyFile": "Fayil ɗin da aka zaɓa ya zama babu komai a ciki.",
+    "errorHeic": "Wannan yana kama da hoton HEIC/HEIF (ruwaito a iPhone/Mac), ko da sunansa ya ƙare da .jpg. Da fatan za a fara mayar da shi zuwa JPEG ko PNG — a Mac: buɗe shi a Preview → File → Export, zaɓi JPEG/PNG — sannan a sake lodawa.",
+    "errorInvalidImage": "Ba a iya karanta wannan fayil a matsayin ingantaccen hoto ba.",
+    "errorProcessing": "Wani abu ya faru ba daidai ba yayin sarrafa wannan hoto.",
+    "errorExport": "An kasa fitar da hoton. Da fatan za a sake gwadawa.",
+    "statusLoaded": "An loda hoto. Daidaita mai zamewa don duba tasirin cutout.",
+    "statusResetOriginal": "An mayar da hoton zuwa yanayin da ya fi kusa da ainihinsa.",
+    "statusResetSettings": "An sake saita dukkan saituna zuwa tsoffin ƙimomin su.",
+    "statusDownloadedNewTab": "An fara sauke hoto — idan babu abin da ya faru, yi amfani da hoton da ya buɗe a sabon shafi ka ajiye shi daga can.",
+    "statusDownloadedSaveAs": "An fara sauke hoto. Idan bai yi aiki ba, danna dama a kan hoton da ke sama sannan ka zaɓi \"Ajiye Hoto da Suna…\".",
+    "langLabel": "Harshe"
+  }
 };
+
+/* ---------------- LanguageSelector ---------------------------------
+   Generic UI controller for the globe icon + glass dropdown panel.
+   Owns: rendering the option list, open/close state, keyboard
+   navigation, RTL <html dir> switching, and localStorage persistence.
+   Takes an onChange callback so the host app can re-render its own
+   translated strings whenever the language changes.
+  --------------------------------------------------------------------- */
+class LanguageSelector {
+  constructor({ languages, translations, storageKey, defaultCode, onChange, root = document }) {
+    this.languages = languages;
+    this.translations = translations;
+    this.storageKey = storageKey || "preferredLanguage";
+    this.defaultCode = defaultCode || "en";
+    this.onChange = onChange || (() => {});
+    this.root = root;
+
+    this.dom = {
+      trigger: root.getElementById("langTrigger"),
+      panel: root.getElementById("langPanel"),
+      list: root.getElementById("langPanelList"),
+    };
+
+    this.open = false;
+    this.current = this._loadSavedLanguage();
+    this._keydownHandler = null;
+    this._outsideClickHandler = null;
+
+    this._renderOptions();
+    this._bindTriggerEvents();
+
+    // Apply immediately on startup (sets <html lang>/<html dir>), but
+    // stay silent: the host app's constructor is still in the middle of
+    // wiring itself up at this point (e.g. `this.languageSelector` isn't
+    // assigned yet), so firing onChange here would call back into a
+    // half-constructed object. The host explicitly calls its own
+    // translation-render step right after creating this selector instead.
+    this._applyLanguage(this.current, { persist: false, silent: true });
+  }
+
+  t(key) {
+    const dict = this.translations[this.current] || this.translations[this.defaultCode];
+    const fallback = this.translations[this.defaultCode] || {};
+    return (dict && dict[key]) || fallback[key] || key;
+  }
+
+  getCurrent() {
+    return this.current;
+  }
+
+  isRtl(code) {
+    const lang = this.languages.find((l) => l.code === code);
+    return !!(lang && lang.rtl);
+  }
+
+  _loadSavedLanguage() {
+    try {
+      const saved = window.localStorage.getItem(this.storageKey);
+      if (saved && this.languages.some((l) => l.code === saved)) {
+        return saved;
+      }
+    } catch (err) {
+      // localStorage may be unavailable (private browsing, disabled) —
+      // fall back to the default language rather than throwing.
+      console.warn("LanguageSelector — localStorage unavailable:", err);
+    }
+    return this.defaultCode;
+  }
+
+  _saveLanguage(code) {
+    try {
+      window.localStorage.setItem(this.storageKey, code);
+    } catch (err) {
+      console.warn("LanguageSelector — could not persist language:", err);
+    }
+  }
+
+  _renderOptions() {
+    const { list } = this.dom;
+    while (list.firstChild) list.removeChild(list.firstChild);
+
+    this.languages.forEach((lang) => {
+      const li = document.createElement("li");
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "lang-option";
+      btn.setAttribute("role", "option");
+      btn.setAttribute("data-lang-code", lang.code);
+      btn.setAttribute("aria-selected", String(lang.code === this.current));
+      btn.setAttribute("lang", lang.code);
+
+      const label = document.createElement("span");
+      label.textContent = lang.name;
+
+      const check = document.createElement("span");
+      check.className = "lang-check";
+      check.setAttribute("aria-hidden", "true");
+      check.innerHTML =
+        '<svg viewBox="0 0 20 20" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+        '<path d="M4 10.5l3.5 3.5L16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+        "</svg>";
+
+      btn.appendChild(label);
+      btn.appendChild(check);
+
+      btn.addEventListener("click", () => {
+        this._applyLanguage(lang.code, { persist: true, silent: false });
+        this.close();
+        this.dom.trigger.focus();
+      });
+
+      li.appendChild(btn);
+      list.appendChild(li);
+    });
+  }
+
+  _applyLanguage(code, { persist, silent }) {
+    if (!this.languages.some((l) => l.code === code)) return;
+    this.current = code;
+
+    const rtl = this.isRtl(code);
+    document.documentElement.setAttribute("lang", code);
+    document.documentElement.setAttribute("dir", rtl ? "rtl" : "ltr");
+
+    // Update selected state in the already-rendered option list.
+    this.dom.list.querySelectorAll(".lang-option").forEach((btn) => {
+      btn.setAttribute("aria-selected", String(btn.getAttribute("data-lang-code") === code));
+    });
+
+    if (persist) this._saveLanguage(code);
+    if (!silent) this.onChange(code);
+  }
+
+  _bindTriggerEvents() {
+    const { trigger, panel } = this.dom;
+
+    trigger.addEventListener("click", () => this.toggle());
+
+    trigger.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown" && !this.open) {
+        e.preventDefault();
+        this.openPanel();
+      }
+    });
+
+    panel.addEventListener("keydown", (e) => this._handlePanelKeydown(e));
+  }
+
+  _handlePanelKeydown(e) {
+    const options = Array.from(this.dom.list.querySelectorAll(".lang-option"));
+    const currentIndex = options.findIndex((el) => el === document.activeElement);
+
+    if (e.key === "Escape") {
+      e.preventDefault();
+      this.close();
+      this.dom.trigger.focus();
+      return;
+    }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      const next = options[Math.min(options.length - 1, currentIndex + 1)] || options[0];
+      next.focus();
+      return;
+    }
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      const prev = options[Math.max(0, currentIndex - 1)] || options[0];
+      prev.focus();
+      return;
+    }
+    if ((e.key === "Enter" || e.key === " ") && document.activeElement && document.activeElement.classList.contains("lang-option")) {
+      e.preventDefault();
+      document.activeElement.click();
+      return;
+    }
+    if (e.key === "Tab") {
+      // Simple containment: keep focus cycling within the option list.
+      const first = options[0];
+      const last = options[options.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  }
+
+  openPanel() {
+    if (this.open) return;
+    this.open = true;
+    this.dom.panel.classList.add("open");
+    this.dom.panel.setAttribute("aria-hidden", "false");
+    this.dom.trigger.setAttribute("aria-expanded", "true");
+
+    // Focus the currently-selected option (or the first option).
+    const selected =
+      this.dom.list.querySelector('.lang-option[aria-selected="true"]') ||
+      this.dom.list.querySelector(".lang-option");
+    if (selected) selected.focus();
+
+    this._outsideClickHandler = (e) => {
+      if (!this.dom.panel.contains(e.target) && !this.dom.trigger.contains(e.target)) {
+        this.close();
+      }
+    };
+    // Deferred so the opening click itself doesn't immediately close it.
+    setTimeout(() => document.addEventListener("click", this._outsideClickHandler), 0);
+
+    this._keydownHandler = (e) => {
+      if (e.key === "Escape") {
+        this.close();
+        this.dom.trigger.focus();
+      }
+    };
+    document.addEventListener("keydown", this._keydownHandler);
+  }
+
+  close() {
+    if (!this.open) return;
+    this.open = false;
+    this.dom.panel.classList.remove("open");
+    this.dom.panel.setAttribute("aria-hidden", "true");
+    this.dom.trigger.setAttribute("aria-expanded", "false");
+
+    if (this._outsideClickHandler) {
+      document.removeEventListener("click", this._outsideClickHandler);
+      this._outsideClickHandler = null;
+    }
+    if (this._keydownHandler) {
+      document.removeEventListener("keydown", this._keydownHandler);
+      this._keydownHandler = null;
+    }
+  }
+
+  toggle() {
+    if (this.open) {
+      this.close();
+    } else {
+      this.openPanel();
+    }
+  }
+}
+/* ================= END REUSABLE LANGUAGE SYSTEM ================= */
 
 /* ==================================================================
    CutoutEffectApp
@@ -1005,15 +2632,12 @@ class CutoutEffectApp {
       formatJpgBtn: root.getElementById("formatJpgBtn"),
       canvasWrap: root.getElementById("canvasWrap"),
       statusMessage: root.getElementById("statusMessage"),
-      langEnBtn: root.getElementById("langEnBtn"),
-      langTrBtn: root.getElementById("langTrBtn"),
       menuBtn: root.getElementById("menuBtn"),
       guideOverlay: root.getElementById("guideOverlay"),
       guideModal: root.getElementById("guideModal"),
       guideCloseBtn: root.getElementById("guideCloseBtn"),
     };
 
-    this.lang = "en";
     this.downloadFormat = "png"; // "png" | "jpg" — toggled via the format switch
 
     // Mutable state
@@ -1030,6 +2654,16 @@ class CutoutEffectApp {
     this._bodyOverflowBeforeGuide = ""; // previous body overflow, restored on close
     this._guideKeydownHandler = null;   // bound Escape/Tab-trap handler, attached only while open
 
+    // Reusable language selector — drives all UI translation.
+    this.languageSelector = new LanguageSelector({
+      languages: LANGUAGES,
+      translations: TRANSLATIONS,
+      storageKey: LANG_STORAGE_KEY,
+      defaultCode: "en",
+      root,
+      onChange: () => this._applyTranslations(),
+    });
+
     this._bindEvents();
     this._loadWasmModule();
     this._applyTranslations();
@@ -1038,16 +2672,7 @@ class CutoutEffectApp {
   /* ---------------- i18n ---------------- */
 
   t(key) {
-    return (I18N[this.lang] && I18N[this.lang][key]) || I18N.en[key] || key;
-  }
-
-  setLanguage(lang) {
-    if (lang !== "en" && lang !== "tr") return;
-    this.lang = lang;
-    document.documentElement.lang = lang;
-    this.dom.langEnBtn.setAttribute("aria-pressed", String(lang === "en"));
-    this.dom.langTrBtn.setAttribute("aria-pressed", String(lang === "tr"));
-    this._applyTranslations();
+    return this.languageSelector.t(key);
   }
 
   _applyTranslations() {
@@ -1057,6 +2682,10 @@ class CutoutEffectApp {
     });
     document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
       const key = el.getAttribute("data-i18n-aria");
+      el.setAttribute("aria-label", this.t(key));
+    });
+    document.querySelectorAll("[data-i18n-aria-label]").forEach((el) => {
+      const key = el.getAttribute("data-i18n-aria-label");
       el.setAttribute("aria-label", this.t(key));
     });
     this.dom.uploadText.textContent = this.originalImageData
@@ -1765,12 +3394,8 @@ class CutoutEffectApp {
       fidelitySlider, fidelityValue,
       resetBtn, resetSlidersBtn, downloadBtn,
       formatPngBtn, formatJpgBtn,
-      langEnBtn, langTrBtn,
       menuBtn, guideOverlay, guideCloseBtn,
     } = this.dom;
-
-    langEnBtn.addEventListener("click", () => this.setLanguage("en"));
-    langTrBtn.addEventListener("click", () => this.setLanguage("tr"));
 
     // Menu button opens the centered User Guide modal directly.
     menuBtn.addEventListener("click", () => this.toggleGuideModal());
