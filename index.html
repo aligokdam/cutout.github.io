@@ -1126,8 +1126,8 @@ html[dir="rtl"] .example-toggle { right: auto; left: 10px; }
 .compare-static.dragging .demo-knob, .demo-knob:hover { transform: scale(1.1); }
 .demo-knob:focus-visible { outline: 2px solid #ffffff; outline-offset: 3px; }
 
-.tone-head { align-items: center; }
-.tone-head .segmented button { min-height: 26px; padding: 3px 12px; font-size: 12px; }
+.tone-seg { margin-top: 12px; }
+.tone-seg button { min-height: 28px; padding: 4px 16px; font-size: 13px; }
 
 .privacy-link, .footer-link {
   display: inline-flex; align-items: center; gap: 7px;
@@ -1169,6 +1169,9 @@ html[dir="rtl"] .example-toggle { right: auto; left: 10px; }
   .example:hover { transform: none; box-shadow: none; }
   .example:active { transform: scale(1.02); }
 }
+
+/* Editor: privacy link at the very bottom, centered like the home page */
+.editor-footer { padding-left: 0; padding-right: 0; padding-bottom: 4px; }
 
 </style>
 </head>
@@ -1448,14 +1451,14 @@ html[dir="rtl"] .example-toggle { right: auto; left: 10px; }
         </div>
 
         <div class="control">
-          <div class="control-head tone-head">
+          <div class="control-head">
             <span class="control-label" id="toneLabel" data-i18n="toneLabel">Tone</span>
-            <div class="segmented" role="radiogroup" id="toneSeg" aria-labelledby="toneLabel" aria-describedby="toneHint">
-              <button type="button" role="radio" aria-checked="true" data-tone="color" data-i18n="toneColor">Color</button>
-              <button type="button" role="radio" aria-checked="false" data-tone="mono" data-i18n="toneMono">Mono</button>
-            </div>
           </div>
           <p class="hint" id="toneHint" data-i18n="toneHint">Color keeps hues. Mono reduces the image to gray tones. Level 2 is always black and white.</p>
+          <div class="segmented tone-seg" role="radiogroup" id="toneSeg" aria-labelledby="toneLabel" aria-describedby="toneHint">
+            <button type="button" role="radio" aria-checked="true" data-tone="color" data-i18n="toneColor">Color</button>
+            <button type="button" role="radio" aria-checked="false" data-tone="mono" data-i18n="toneMono">Mono</button>
+          </div>
         </div>
 
         <div class="btn-row">
@@ -1479,11 +1482,12 @@ html[dir="rtl"] .example-toggle { right: auto; left: 10px; }
         </button>
       </div>
 
-      <div class="group wide">
-        <button class="privacy-link" id="privacyBtn" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.6"/><path d="M5.3 7V5a2.7 2.7 0 0 1 5.4 0v2"/></svg><span data-i18n="privacyTitle">Privacy</span></button>
-      </div>
     </aside>
   </main>
+
+  <footer class="home-footer editor-footer">
+    <button class="footer-link" id="privacyBtn" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.6"/><path d="M5.3 7V5a2.7 2.7 0 0 1 5.4 0v2"/></svg><span data-i18n="privacyTitle">Privacy</span></button>
+  </footer>
 
 </div>
 
