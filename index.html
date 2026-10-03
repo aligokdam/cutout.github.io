@@ -43,6 +43,8 @@
   --surface: rgba(28, 28, 30, 0.72);
   --surface-solid: #1c1c1e;
   --card: #141416;
+  --glow: rgba(255, 255, 255, 0.16);
+  --glow-icon: drop-shadow(0 0 10px rgba(255, 255, 255, 0.55));
   --surface-raised: rgba(44, 44, 46, 0.55);
   --well: #050506;
   --separator: rgba(255, 255, 255, 0.085);
@@ -88,6 +90,8 @@ html[data-theme="light"] {
   --surface: rgba(255, 255, 255, 0.8);
   --surface-solid: #ffffff;
   --card: #ffffff;
+  --glow: rgba(0, 0, 0, 0.055);
+  --glow-icon: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.18));
   --surface-raised: rgba(255, 255, 255, 0.9);
   --well: #e9e9ed;
   --separator: rgba(0, 0, 0, 0.08);
@@ -1173,6 +1177,35 @@ html[dir="rtl"] .example-toggle { right: auto; left: 10px; }
 /* Editor: privacy link at the very bottom, centered like the home page */
 .editor-footer { padding-left: 0; padding-right: 0; padding-bottom: 4px; }
 
+/* Tablet: Effect and Color side by side, Export full width below */
+@media (max-width: 860px) and (min-width: 641px) {
+  .inspector .group:last-child { grid-column: 1 / -1; border-inline-start: 0; border-top: 1px solid var(--separator); }
+}
+
+/* Feature cards and the Free / Open source / Private items: hover lift */
+.feature {
+  position: relative;
+  transition: transform .35s var(--ease-out), box-shadow .35s var(--ease), border-color .35s var(--ease);
+}
+.feature:hover, .feature:has(:focus-visible) {
+  z-index: 2;
+  transform: scale(1.03);
+  border-color: var(--separator-strong);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, .3);
+}
+.value-item { padding: 18px 24px; }
+
+@media (hover: none) {
+  .feature:hover { transform: none; box-shadow: none; border-color: var(--separator); }
+}
+@media (max-width: 640px) {
+  .value-item { padding: 14px 8px; }
+  .value-item + .value-item { padding-top: 22px; }
+}
+
+
+.sheet:focus, .sheet:focus-visible { outline: none; }
+
 </style>
 </head>
 <body>
@@ -1450,6 +1483,10 @@ html[dir="rtl"] .example-toggle { right: auto; left: 10px; }
           <div class="scale" aria-hidden="true"><span>0</span><span>3</span></div>
         </div>
 
+      </div>
+
+      <div class="group">
+        <h2 class="group-title" data-i18n="groupColor">Color Settings</h2>
         <div class="control">
           <div class="control-head">
             <span class="control-label" id="toneLabel" data-i18n="toneLabel">Tone</span>
@@ -1494,7 +1531,7 @@ html[dir="rtl"] .example-toggle { right: auto; left: 10px; }
 <!-- One sheet hosts Settings, Language, Privacy and the User Guide, so every
      secondary screen is part of the same workspace rather than a new page. -->
 <div class="sheet-backdrop" id="sheetBackdrop"></div>
-<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="true">
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="true" tabindex="-1">
   <div class="sheet-header">
     <div class="start">
       <button class="nav-btn" id="sheetBack" type="button" hidden>
@@ -1781,7 +1818,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "Open source",
   "openText": "The full source code is public on GitHub.",
   "privateTitle": "Private",
-  "privateText": "Photos are processed on your device and never uploaded."
+  "privateText": "Photos are processed on your device and never uploaded.",
+  "groupColor": "Color Settings"
  },
  "fil": {
   "appTitle": "Cutout Effect Studio",
@@ -1903,7 +1941,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "Open source",
   "openText": "Pampubliko sa GitHub ang buong source code.",
   "privateTitle": "Pribado",
-  "privateText": "Pinoproseso ang mga larawan sa iyong device at hindi kailanman ina-upload."
+  "privateText": "Pinoproseso ang mga larawan sa iyong device at hindi kailanman ina-upload.",
+  "groupColor": "Mga Setting ng Kulay"
  },
  "fr": {
   "appTitle": "Cutout Effect Studio",
@@ -2025,7 +2064,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "Open source",
   "openText": "Tout le code source est public sur GitHub.",
   "privateTitle": "Privé",
-  "privateText": "Les photos sont traitées sur votre appareil et jamais envoyées."
+  "privateText": "Les photos sont traitées sur votre appareil et jamais envoyées.",
+  "groupColor": "Réglages de couleur"
  },
  "de": {
   "appTitle": "Cutout Effect Studio",
@@ -2147,7 +2187,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "Open Source",
   "openText": "Der gesamte Quellcode ist auf GitHub öffentlich.",
   "privateTitle": "Privat",
-  "privateText": "Fotos werden auf deinem Gerät verarbeitet und nie hochgeladen."
+  "privateText": "Fotos werden auf deinem Gerät verarbeitet und nie hochgeladen.",
+  "groupColor": "Farbeinstellungen"
  },
  "ha": {
   "appTitle": "Cutout Effect Studio",
@@ -2269,7 +2310,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "Buɗaɗɗen tushe",
   "openText": "Duk lambar tushe a buɗe take a GitHub.",
   "privateTitle": "Na sirri",
-  "privateText": "Ana sarrafa hotuna a kan na'urarka kuma ba a taɓa loda su ba."
+  "privateText": "Ana sarrafa hotuna a kan na'urarka kuma ba a taɓa loda su ba.",
+  "groupColor": "Saitunan Launi"
  },
  "id": {
   "appTitle": "Cutout Effect Studio",
@@ -2391,7 +2433,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "Sumber terbuka",
   "openText": "Seluruh kode sumber terbuka untuk publik di GitHub.",
   "privateTitle": "Privat",
-  "privateText": "Foto diproses di perangkat Anda dan tidak pernah diunggah."
+  "privateText": "Foto diproses di perangkat Anda dan tidak pernah diunggah.",
+  "groupColor": "Pengaturan Warna"
  },
  "it": {
   "appTitle": "Cutout Effect Studio",
@@ -2513,7 +2556,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "Open source",
   "openText": "Tutto il codice sorgente è pubblico su GitHub.",
   "privateTitle": "Privato",
-  "privateText": "Le foto vengono elaborate sul tuo dispositivo e mai caricate."
+  "privateText": "Le foto vengono elaborate sul tuo dispositivo e mai caricate.",
+  "groupColor": "Impostazioni colore"
  },
  "pt": {
   "appTitle": "Cutout Effect Studio",
@@ -2635,7 +2679,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "Código aberto",
   "openText": "Todo o código-fonte é público no GitHub.",
   "privateTitle": "Privado",
-  "privateText": "As fotos são processadas no seu dispositivo e nunca enviadas."
+  "privateText": "As fotos são processadas no seu dispositivo e nunca enviadas.",
+  "groupColor": "Ajustes de cor"
  },
  "es": {
   "appTitle": "Cutout Effect Studio",
@@ -2757,7 +2802,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "Código abierto",
   "openText": "Todo el código fuente es público en GitHub.",
   "privateTitle": "Privado",
-  "privateText": "Las fotos se procesan en tu dispositivo y nunca se suben."
+  "privateText": "Las fotos se procesan en tu dispositivo y nunca se suben.",
+  "groupColor": "Ajustes de color"
  },
  "tr": {
   "appTitle": "Cutout Effect Studio",
@@ -2879,7 +2925,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "Açık kaynak",
   "openText": "Kaynak kodun tamamı GitHub'da herkese açık.",
   "privateTitle": "Gizli",
-  "privateText": "Fotoğraflar cihazınızda işlenir ve hiçbir yere yüklenmez."
+  "privateText": "Fotoğraflar cihazınızda işlenir ve hiçbir yere yüklenmez.",
+  "groupColor": "Renk Ayarları"
  },
  "vi": {
   "appTitle": "Cutout Effect Studio",
@@ -3001,7 +3048,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "Mã nguồn mở",
   "openText": "Toàn bộ mã nguồn được công khai trên GitHub.",
   "privateTitle": "Riêng tư",
-  "privateText": "Ảnh được xử lý trên thiết bị của bạn và không bao giờ được tải lên."
+  "privateText": "Ảnh được xử lý trên thiết bị của bạn và không bao giờ được tải lên.",
+  "groupColor": "Cài đặt màu"
  },
  "ar": {
   "appTitle": "Cutout Effect Studio",
@@ -3123,7 +3171,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "مفتوح المصدر",
   "openText": "الشيفرة المصدرية كاملة متاحة على GitHub.",
   "privateTitle": "خاص",
-  "privateText": "تُعالَج الصور على جهازك ولا تُرفع أبدًا."
+  "privateText": "تُعالَج الصور على جهازك ولا تُرفع أبدًا.",
+  "groupColor": "إعدادات الألوان"
  },
  "fa": {
   "appTitle": "Cutout Effect Studio",
@@ -3245,7 +3294,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "متن‌باز",
   "openText": "کل کد منبع در GitHub عمومی است.",
   "privateTitle": "خصوصی",
-  "privateText": "عکس‌ها روی دستگاه شما پردازش می‌شوند و هرگز بارگذاری نمی‌شوند."
+  "privateText": "عکس‌ها روی دستگاه شما پردازش می‌شوند و هرگز بارگذاری نمی‌شوند.",
+  "groupColor": "تنظیمات رنگ"
  },
  "ur": {
   "appTitle": "Cutout Effect Studio",
@@ -3367,7 +3417,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "اوپن سورس",
   "openText": "پورا سورس کوڈ GitHub پر عوامی ہے۔",
   "privateTitle": "نجی",
-  "privateText": "تصاویر آپ کے آلے پر پروسیس ہوتی ہیں اور کبھی اپ لوڈ نہیں ہوتیں۔"
+  "privateText": "تصاویر آپ کے آلے پر پروسیس ہوتی ہیں اور کبھی اپ لوڈ نہیں ہوتیں۔",
+  "groupColor": "رنگ کی ترتیبات"
  },
  "ru": {
   "appTitle": "Cutout Effect Studio",
@@ -3489,7 +3540,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "Открытый код",
   "openText": "Весь исходный код открыт на GitHub.",
   "privateTitle": "Приватно",
-  "privateText": "Фото обрабатываются на вашем устройстве и никуда не загружаются."
+  "privateText": "Фото обрабатываются на вашем устройстве и никуда не загружаются.",
+  "groupColor": "Настройки цвета"
  },
  "zh": {
   "appTitle": "Cutout Effect Studio",
@@ -3611,7 +3663,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "开源",
   "openText": "完整源代码在 GitHub 上公开。",
   "privateTitle": "私密",
-  "privateText": "照片在你的设备上处理，绝不上传。"
+  "privateText": "照片在你的设备上处理，绝不上传。",
+  "groupColor": "颜色设置"
  },
  "ja": {
   "appTitle": "Cutout Effect Studio",
@@ -3733,7 +3786,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "オープンソース",
   "openText": "ソースコードはすべてGitHubで公開されています。",
   "privateTitle": "プライベート",
-  "privateText": "写真はお使いのデバイス上で処理され、アップロードされることはありません。"
+  "privateText": "写真はお使いのデバイス上で処理され、アップロードされることはありません。",
+  "groupColor": "カラー設定"
  },
  "ko": {
   "appTitle": "Cutout Effect Studio",
@@ -3855,7 +3909,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "오픈 소스",
   "openText": "전체 소스 코드가 GitHub에 공개되어 있습니다.",
   "privateTitle": "비공개",
-  "privateText": "사진은 기기에서 처리되며 절대 업로드되지 않습니다."
+  "privateText": "사진은 기기에서 처리되며 절대 업로드되지 않습니다.",
+  "groupColor": "색상 설정"
  },
  "hi": {
   "appTitle": "Cutout Effect Studio",
@@ -3977,7 +4032,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "ओपन सोर्स",
   "openText": "पूरा सोर्स कोड GitHub पर सार्वजनिक है।",
   "privateTitle": "निजी",
-  "privateText": "फ़ोटो आपके डिवाइस पर प्रोसेस होती हैं और कभी अपलोड नहीं होतीं।"
+  "privateText": "फ़ोटो आपके डिवाइस पर प्रोसेस होती हैं और कभी अपलोड नहीं होतीं।",
+  "groupColor": "रंग सेटिंग्स"
  },
  "mr": {
   "appTitle": "Cutout Effect Studio",
@@ -4099,7 +4155,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "ओपन सोर्स",
   "openText": "संपूर्ण सोर्स कोड GitHub वर सार्वजनिक आहे.",
   "privateTitle": "खाजगी",
-  "privateText": "फोटो तुमच्या डिव्हाइसवर प्रक्रिया होतात आणि कधीही अपलोड होत नाहीत."
+  "privateText": "फोटो तुमच्या डिव्हाइसवर प्रक्रिया होतात आणि कधीही अपलोड होत नाहीत.",
+  "groupColor": "रंग सेटिंग्ज"
  },
  "bn": {
   "appTitle": "Cutout Effect Studio",
@@ -4221,7 +4278,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "ওপেন সোর্স",
   "openText": "সম্পূর্ণ সোর্স কোড GitHub-এ উন্মুক্ত।",
   "privateTitle": "গোপনীয়",
-  "privateText": "ছবি আপনার ডিভাইসেই প্রক্রিয়া হয় এবং কখনও আপলোড হয় না।"
+  "privateText": "ছবি আপনার ডিভাইসেই প্রক্রিয়া হয় এবং কখনও আপলোড হয় না।",
+  "groupColor": "রঙের সেটিংস"
  },
  "pa": {
   "appTitle": "Cutout Effect Studio",
@@ -4343,7 +4401,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "ਓਪਨ ਸੋਰਸ",
   "openText": "ਪੂਰਾ ਸੋਰਸ ਕੋਡ GitHub 'ਤੇ ਜਨਤਕ ਹੈ।",
   "privateTitle": "ਨਿੱਜੀ",
-  "privateText": "ਫੋਟੋਆਂ ਤੁਹਾਡੀ ਡਿਵਾਈਸ 'ਤੇ ਪ੍ਰੋਸੈਸ ਹੁੰਦੀਆਂ ਹਨ ਅਤੇ ਕਦੇ ਅੱਪਲੋਡ ਨਹੀਂ ਹੁੰਦੀਆਂ।"
+  "privateText": "ਫੋਟੋਆਂ ਤੁਹਾਡੀ ਡਿਵਾਈਸ 'ਤੇ ਪ੍ਰੋਸੈਸ ਹੁੰਦੀਆਂ ਹਨ ਅਤੇ ਕਦੇ ਅੱਪਲੋਡ ਨਹੀਂ ਹੁੰਦੀਆਂ।",
+  "groupColor": "ਰੰਗ ਸੈਟਿੰਗਾਂ"
  },
  "ta": {
   "appTitle": "Cutout Effect Studio",
@@ -4465,7 +4524,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "திறந்த மூலம்",
   "openText": "முழு மூலக் குறியீடும் GitHub இல் பொதுவில் உள்ளது.",
   "privateTitle": "தனிப்பட்டது",
-  "privateText": "புகைப்படங்கள் உங்கள் சாதனத்திலேயே செயலாக்கப்படும், ஒருபோதும் பதிவேற்றப்படாது."
+  "privateText": "புகைப்படங்கள் உங்கள் சாதனத்திலேயே செயலாக்கப்படும், ஒருபோதும் பதிவேற்றப்படாது.",
+  "groupColor": "வண்ண அமைப்புகள்"
  },
  "te": {
   "appTitle": "Cutout Effect Studio",
@@ -4587,7 +4647,8 @@ g.CES_TRANSLATIONS = {
   "openTitle": "ఓపెన్ సోర్స్",
   "openText": "పూర్తి సోర్స్ కోడ్ GitHub లో పబ్లిక్‌గా ఉంది.",
   "privateTitle": "గోప్యం",
-  "privateText": "ఫోటోలు మీ పరికరంలోనే ప్రాసెస్ అవుతాయి, ఎప్పుడూ అప్‌లోడ్ కావు."
+  "privateText": "ఫోటోలు మీ పరికరంలోనే ప్రాసెస్ అవుతాయి, ఎప్పుడూ అప్‌లోడ్ కావు.",
+  "groupColor": "రంగు సెట్టింగ్‌లు"
  }
 };
 })(window);
@@ -5972,17 +6033,20 @@ else if (typeof define === 'function' && define['amd'])
     pages().forEach(function (el) { el.inert = true; el.setAttribute("aria-hidden", "true"); });
     root.style.overflow = "hidden";
     setTimeout(function () {
-      var focusTarget = view === "language"
-        ? dom.langList.querySelector('[aria-checked="true"]')
-        : dom.sheetDone;
-      (focusTarget || dom.sheetDone).focus({ preventScroll: true });
+      // Focus the dialog itself: keyboard users can Tab from here, and no
+      // focus ring appears on a row or button that nobody pressed.
+      dom.sheet.focus({ preventScroll: true });
+      if (view === "language") {
+        var current = dom.langList.querySelector('[aria-checked="true"]');
+        if (current) current.scrollIntoView({ block: "center" });
+      }
     }, 30);
   }
 
   function pushView(view) {
     sheet.stack.push(view);
     showView(view, "forward");
-    dom.sheetBack.focus({ preventScroll: true });
+    dom.sheet.focus({ preventScroll: true });
   }
 
   function popView() {
